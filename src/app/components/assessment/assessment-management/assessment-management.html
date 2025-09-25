@@ -1,0 +1,55 @@
+<div class="assessment-container">
+  <h2>Manage Assessments</h2>
+
+  <div class="form-card">
+    <h3>{{ isEditMode ? 'Edit Assessment' : 'Create New Assessment' }}</h3>
+    <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" id="title" formControlName="title">
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="durationMinutes">Duration (minutes)</label>
+        <input type="number" id="durationMinutes" formControlName="durationMinutes">
+      </div>
+      <div class="form-actions">
+        <button type="submit" [disabled]="assessmentForm.invalid">{{ isEditMode ? 'Update' : 'Create' }}</button>
+        <button type="button" *ngIf="isEditMode" (click)="onCancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="assessment-list">
+    <h3>Existing Assessments</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Duration</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assessment of assessments">
+          <td>{{ assessment.title }}</td>
+          <td>{{ assessment.description }}</td>
+          <td>{{ assessment.durationMinutes }} mins</td>
+          <td>{{ assessment.createdAt | date }}</td>
+          <td>
+            <div class="actions-cell">
+                <button class="edit-button" (click)="onEdit(assessment)">Edit</button>
+                <button class="manage-button" (click)="onManageQuestions(assessment.assessmentId)">Manage Questions</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="assessments.length === 0">No assessments found.</p>
+  </div>
+</div>

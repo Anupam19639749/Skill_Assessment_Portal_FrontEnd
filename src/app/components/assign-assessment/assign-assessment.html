@@ -1,0 +1,123 @@
+<div class="assign-assessment-container">
+  <h2>Assign Assessment to Users</h2>
+  
+  <div class="assignment-form-card">
+    <form [formGroup]="assignmentForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Assessment Selection -->
+      <div class="form-group">
+        <label for="assessmentId">Select Assessment</label>
+        <select 
+          id="assessmentId" 
+          formControlName="assessmentId" 
+          (change)="onAssessmentChange()">
+          <option value="" disabled>-- Select an Assessment --</option>
+          <option *ngFor="let assessment of assessments" [value]="assessment.assessmentId">
+            {{ assessment.title }} ({{ assessment.durationMinutes }} min)
+          </option>
+        </select>
+        <div *ngIf="assignmentForm.get('assessmentId')?.invalid && assignmentForm.get('assessmentId')?.touched" 
+             class="error-message">
+          Assessment selection is required.
+        </div>
+      </div>
+
+      <!-- User Selection with Checkboxes -->
+      <div class="form-group">
+        <div class="users-header">
+          <label>Select Users (Candidates Only)</label>
+          <div class="user-actions" *ngIf="assignmentForm.get('assessmentId')?.value">
+            <button type="button" class="btn-link" (click)="selectAllUsers()">Select All</button>
+            <button type="button" class="btn-link" (click)="clearAllUsers()">Clear All</button>
+          </div>
+        </div>
+
+        <div class="users-container" *ngIf="assignmentForm.get('assessmentId')?.value">
+          <div class="selected-count" *ngIf="selectedUserIds.length > 0">
+            {{ selectedUserIds.length }} user(s) selected
+          </div>
+
+          <div class="users-list">
+            <div *ngFor="let user of users" class="user-item" [class.disabled]="isUserAssigned(user.userId)">
+                <label class="user-checkbox">
+                    <input 
+                      type="checkbox" 
+                      [checked]="isUserSelected(user.userId)"
+                      [disabled]="isUserAssigned(user.userId)"
+                      (change)="onUserCheckboxChange(user.userId, $event)">
+                    <span class="checkmark"></span>
+                    
+                    <div class="user-info">
+                      <div class="user-name">{{ user.fullName }}</div>
+                      <div class="user-email">{{ user.email }}</div>
+                      
+                      <div class="user-status-action">
+                          <div class="user-status" *ngIf="isUserAssigned(user.userId)">
+                              Status: {{ getAssignmentStatus(user) }}
+                          </div>
+
+                          <button 
+                              *ngIf="canUnassign(user)"
+                              type="button" 
+                              class="btn-unassign" 
+                              (click)="onUnassign(getUserAssessmentId(user.userId))"
+                              [disabled]="!canUnassign(user)"
+                              title="Unassign Assessment">
+                              Unassign
+                          </button>
+                      </div>
+                    </div>
+                </label>
+            </div>
+          </div>
+
+          <div *ngIf="users.length === 0" class="no-users">
+            No candidates available.
+          </div>
+        </div>
+
+        <div *ngIf="!assignmentForm.get('assessmentId')?.value" class="no-assessment">
+          Please select an assessment first.
+        </div>
+
+        <div *ngIf="selectedUserIds.length === 0 && assignmentForm.get('assessmentId')?.value && users.length > 0" class="error-message">
+          Please select at least one user.
+        </div>
+      </div>
+
+      <!-- Scheduled Time -->
+      <div class="form-group">
+        <label for="scheduledAt">Scheduled Start Time</label>
+        <input 
+          type="datetime-local" 
+          id="scheduledAt" 
+          formControlName="scheduledAt">
+        <div *ngIf="assignmentForm.get('scheduledAt')?.invalid && assignmentForm.get('scheduledAt')?.touched" 
+             class="error-message">
+          Scheduled start time is required.
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          [disabled]="assignmentForm.invalid || selectedUserIds.length === 0 || isLoading">
+          <span *ngIf="!isLoading">Assign Assessment</span>
+          <span *ngIf="isLoading">Assigning...</span>
+        </button>
+        <button type="button" class="btn-cancel" (click)="resetForm()" [disabled]="isLoading">
+          Clear Form
+        </button>
+      </div>
+    </form>
+
+    <!-- Status Messages -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  </div>
+</div>

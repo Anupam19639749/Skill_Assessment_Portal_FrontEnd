@@ -1,0 +1,21 @@
+<header class="navbar">
+  <div class="navbar-content">
+    <div class="navbar-logo-container">
+      <a class="navbar-logo" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Skill Assessment Portal</a>
+    </div>
+    <nav class="navbar-nav-links">
+      <a *ngIf="isManager" routerLink="/assign-assessment" routerLinkActive="active">Assign Assessment</a>
+      <a *ngIf="isManager" routerLink="/assessments" routerLinkActive="active">Manage Assessments</a>
+      <a *ngIf="isManager" routerLink="/users" routerLinkActive="active">Manage Users</a>
+      <a *ngIf="isCandidate" routerLink="/my-submissions" routerLinkActive="active">My Submissions</a>
+    </nav>
+    <div class="navbar-user">
+      <span class="navbar-username" *ngIf="isLoggedIn">Welcome, {{ userName }}</span>
+      <button class="btn btn-logout" *ngIf="isLoggedIn" (click)="onLogout()">Logout</button>
+      <a class="btn btn-login" *ngIf="!isLoggedIn && router.url !== '/login'" routerLink="/login">Login</a>
+    </div>
+  </div>
+</header>
+<main class="content">
+  <router-outlet></router-outlet>
+</main>

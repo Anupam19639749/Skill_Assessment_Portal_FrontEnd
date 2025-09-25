@@ -1,0 +1,99 @@
+.user-management-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.user-list-card, .user-edit-form-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+td button {
+  margin-right: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+input, select {
+  width: 95%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* General button styling (ensure these are consistent across the app) */
+button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-icon-secondary {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6c757d;
+}
+.btn-icon-danger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #dc3545;
+}
+.btn-cancel {
+  background-color: #e2e6ea;
+  color: #6c757d;
+  border: 1px solid #c6c6c6;
+}
+button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+}

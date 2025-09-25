@@ -1,0 +1,87 @@
+<div class="question-container">
+  <h2>Manage Questions for Assessment ID: {{ assessmentId }}</h2>
+  
+  <div class="form-card">
+    <h3>{{ isEditMode ? 'Edit Question' : 'Add New Question' }}</h3>
+    <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="questionText">Question Text</label>
+        <textarea id="questionText" formControlName="questionText"></textarea>
+      </div>
+
+      <div class="form-group-row">
+        <div class="form-group-item">
+          <label for="questionType">Question Type</label>
+          <select id="questionType" formControlName="questionType">
+            <option *ngFor="let type of questionTypes; index as i" [value]="i">{{ type }}</option>
+          </select>
+        </div>
+        <div class="form-group-item">
+          <label for="difficultyLevel">Difficulty</label>
+          <select id="difficultyLevel" formControlName="difficultyLevel">
+            <option *ngFor="let level of difficultyLevels; index as i" [value]="i">{{ level }}</option>
+          </select>
+        </div>
+        <div class="form-group-item">
+          <label for="maxMarks">Max Marks</label>
+          <input type="number" id="maxMarks" formControlName="maxMarks">
+        </div>
+      </div>
+
+      <div class="form-group" formArrayName="options">
+        <label>Options</label>
+        <div *ngFor="let option of options.controls; index as i" class="option-group">
+          <input type="text" [formControlName]="i">
+          <button type="button" class="btn-icon" (click)="removeOption(i)">
+            <span class="material-icons">
+              close
+            </span>
+          </button>
+        </div>
+        <button type="button" class="btn-add-option" (click)="addOption()">+ Add Option</button>
+      </div>
+
+      <div class="form-group">
+        <label for="correctAnswer">Correct Answer</label>
+        <input type="text" id="correctAnswer" formControlName="correctAnswer">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-update" [disabled]="questionForm.invalid">{{ isEditMode ? 'Update Question' : 'Add Question' }}</button>
+        <button type="button" class="btn-cancel" *ngIf="isEditMode" (click)="resetFormAndReload()">Cancel</button>
+    </div>
+    </form>
+  </div>
+
+  <div class="question-list">
+    <h3>Existing Questions</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Type</th>
+          <th>Difficulty</th>
+          <th>Marks</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let question of questions">
+          <td>{{ question.questionText }}</td>
+          <td>{{ questionTypes[question.questionType] }}</td>
+          <td>{{ difficultyLevels[question.difficultyLevel] }}</td>
+          <td>{{ question.maxMarks }}</td>
+          <td>
+                <button class="btn-icon-secondary" title="Edit Question" (click)="onEdit(question)">
+                    <span class="material-icons">edit</span>
+                </button>
+                <button class="btn-icon-danger" title="Delete Question" (click)="onDelete(question.questionId)">
+                    <span class="material-icons">delete</span>
+                </button>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="questions.length === 0">No questions found for this assessment.</p>
+  </div>
+</div>

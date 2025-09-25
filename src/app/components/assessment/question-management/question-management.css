@@ -1,0 +1,217 @@
+/* Base container styling */
+.question-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+h2, h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* Card styling for forms and lists */
+.form-card, .question-list {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+/* Form Group Layout */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group-item {
+  flex: 1;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Input, textarea, select base styles */
+textarea, input[type="text"], input[type="number"], select {
+  width: 95%; /* Adjusted for consistent padding */
+  padding: 0.75rem 0.5rem; /* Increased vertical padding */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea:focus, input:focus, select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Option Group for MCQ */
+.option-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.option-group input {
+  flex-grow: 1;
+}
+
+/* Base button styles */
+button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+button:disabled {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+  color: #666 !important;
+}
+
+/* Specific button styles */
+.btn-primary { /* For Add Option (green) or similar primary actions */
+  background-color: #28a745; /* Green for add */
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #218838;
+}
+
+.btn-update { /* For Update Question (blue) */
+  background-color: #007bff;
+  color: white;
+}
+.btn-update:hover {
+  background-color: #0056b3;
+}
+
+.btn-cancel { /* For Cancel (light grey) */
+  background-color: #e2e6ea;
+  color: #6c757d;
+  border: 1px solid #c6c6c6;
+}
+.btn-cancel:hover {
+  background-color: #d1d5da;
+  color: #5a6268;
+}
+
+.btn-danger { /* For Delete (red) */
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Action buttons in forms */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem 0.5rem; /* Consistent padding */
+  border-bottom: 1px solid #eee;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: 700;
+  color: #444;
+}
+
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Icon button styles for table actions */
+.btn-icon-secondary, .btn-icon-danger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem; /* Slightly larger hit area */
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s, color 0.2s;
+  margin: 0 0.2rem; /* Small margin between icons */
+}
+
+.btn-icon-secondary {
+  color: #6c757d;
+}
+
+.btn-icon-danger {
+  color: #dc3545;
+}
+
+.btn-icon-secondary:hover {
+  background-color: #e9ecef; /* Lighter hover */
+  color: #5a6268;
+}
+
+.btn-icon-danger:hover {
+  background-color: #f8d7da;
+  color: #c82333;
+}
+
+.material-icons {
+  font-size: 1.25rem; /* Standard icon size */
+}
+
+/* Table cell for actions */
+td:last-child {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Adjustments for the "+ Add Option" button */
+.btn-add-option {
+    margin-top: 0.5rem; /* Reduce margin to be closer to options */
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    background-color: #17a2b8; /* A different color for 'add' type actions */
+    color: white;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-add-option:hover {
+    background-color: #138496;
+}
