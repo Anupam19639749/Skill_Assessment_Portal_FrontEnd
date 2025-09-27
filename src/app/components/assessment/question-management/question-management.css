@@ -1,217 +1,267 @@
-/* Base container styling */
+/* General Container */
 .question-container {
   max-width: 900px;
   margin: 2rem auto;
   padding: 1.5rem;
-  background-color: #f9f9f9;
+  background-color: #f0f2f5;
   border-radius: 8px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 
-h2, h3 {
+h2 {
   text-align: center;
-  color: #333;
-  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2rem;
 }
 
-/* Card styling for forms and lists */
-.form-card, .question-list {
+h3 {
+  color: #34495e;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+/* Form Card */
+.form-card {
   background: #fff;
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
 }
 
-/* Form Group Layout */
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  color: #555;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.8rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
 .form-group-row {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group-item {
   flex: 1;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #555;
-}
-
-/* Input, textarea, select base styles */
-textarea, input[type="text"], input[type="number"], select {
-  width: 95%; /* Adjusted for consistent padding */
-  padding: 0.75rem 0.5rem; /* Increased vertical padding */
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-textarea:focus, input:focus, select:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-/* Option Group for MCQ */
+/* Options Styling */
 .option-group {
   display: flex;
   align-items: center;
+  margin-bottom: 0.8rem;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .option-group input {
   flex-grow: 1;
 }
 
-/* Base button styles */
-button {
-  padding: 0.75rem 1.5rem;
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #dc3545; /* Red for delete */
+  padding: 0.4rem;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #f8d7da;
+}
+
+.btn-icon:disabled {
+  color: #cccccc;
+  cursor: not-allowed;
+  background: none;
+}
+
+
+.btn-add-option {
+  background-color: #007bff;
+  color: white;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-add-option:hover {
+  background-color: #0056b3;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.form-actions button {
+  padding: 0.8rem 1.8rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s;
 }
 
-button:disabled {
-  background-color: #cccccc !important;
-  cursor: not-allowed;
-  color: #666 !important;
-}
-
-/* Specific button styles */
-.btn-primary { /* For Add Option (green) or similar primary actions */
-  background-color: #28a745; /* Green for add */
+.btn-update {
+  background-color: #28a745;
   color: white;
 }
-.btn-primary:hover {
+
+.btn-update:hover:not([disabled]) {
   background-color: #218838;
 }
 
-.btn-update { /* For Update Question (blue) */
-  background-color: #007bff;
+.btn-update:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.btn-cancel {
+  background-color: #6c757d;
   color: white;
 }
-.btn-update:hover {
-  background-color: #0056b3;
+
+.btn-cancel:hover:not([disabled]) {
+  background-color: #5a6268;
 }
 
-.btn-cancel { /* For Cancel (light grey) */
-  background-color: #e2e6ea;
-  color: #6c757d;
-  border: 1px solid #c6c6c6;
-}
-.btn-cancel:hover {
-  background-color: #d1d5da;
-  color: #5a6268;
+/* Question List */
+.question-list {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.btn-danger { /* For Delete (red) */
-  background-color: #dc3545;
-  color: white;
-}
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-/* Action buttons in forms */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-/* Table styling */
-table {
+.question-list table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
 
-th, td {
+.question-list th, .question-list td {
   text-align: left;
-  padding: 0.75rem 0.5rem; /* Consistent padding */
+  padding: 0.75rem;
   border-bottom: 1px solid #eee;
 }
 
-th {
-  background-color: #f2f2f2;
-  font-weight: 700;
-  color: #444;
+.question-list th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #555;
 }
 
-tbody tr:hover {
+.question-list tbody tr:hover {
   background-color: #f5f5f5;
 }
 
-/* Icon button styles for table actions */
+.question-list td:last-child {
+  white-space: nowrap; /* Prevent action buttons from wrapping */
+}
+
 .btn-icon-secondary, .btn-icon-danger {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.5rem; /* Slightly larger hit area */
+  padding: 0.4rem;
   border-radius: 50%;
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  transition: background-color 0.2s, color 0.2s;
-  margin: 0 0.2rem; /* Small margin between icons */
+  transition: background-color 0.2s;
+  margin-right: 0.2rem;
 }
 
-.btn-icon-secondary {
-  color: #6c757d;
-}
+.btn-icon-secondary { color: #6c757d; }
+.btn-icon-danger { color: #dc3545; }
+.btn-icon-secondary:hover { background-color: #e2e6ea; }
+.btn-icon-danger:hover { background-color: #f8d7da; }
 
-.btn-icon-danger {
-  color: #dc3545;
-}
-
-.btn-icon-secondary:hover {
-  background-color: #e9ecef; /* Lighter hover */
-  color: #5a6268;
-}
-
-.btn-icon-danger:hover {
-  background-color: #f8d7da;
-  color: #c82333;
-}
-
-.material-icons {
-  font-size: 1.25rem; /* Standard icon size */
-}
-
-/* Table cell for actions */
-td:last-child {
+.question-list p {
   text-align: center;
-  white-space: nowrap;
+  color: #666;
+  font-style: italic;
+  margin-top: 1.5rem;
 }
 
-/* Adjustments for the "+ Add Option" button */
-.btn-add-option {
-    margin-top: 0.5rem; /* Reduce margin to be closer to options */
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    background-color: #17a2b8; /* A different color for 'add' type actions */
-    color: white;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
+.error-message {
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: 0.5rem;
 }
 
-.btn-add-option:hover {
-    background-color: #138496;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .question-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .form-group-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
 }

@@ -26,10 +26,6 @@
       <div class="form-group">
         <div class="users-header">
           <label>Select Users (Candidates Only)</label>
-          <div class="user-actions" *ngIf="assignmentForm.get('assessmentId')?.value">
-            <button type="button" class="btn-link" (click)="selectAllUsers()">Select All</button>
-            <button type="button" class="btn-link" (click)="clearAllUsers()">Clear All</button>
-          </div>
         </div>
 
         <div class="users-container" *ngIf="assignmentForm.get('assessmentId')?.value">
@@ -55,12 +51,12 @@
                           <div class="user-status" *ngIf="isUserAssigned(user.userId)">
                               Status: {{ getAssignmentStatus(user) }}
                           </div>
-
+                          
                           <button 
-                              *ngIf="canUnassign(user)"
+                              *ngIf="canUnassign(user) && getUserAssessmentId(user.userId) !== undefined"
                               type="button" 
                               class="btn-unassign" 
-                              (click)="onUnassign(getUserAssessmentId(user.userId))"
+                              (click)="onUnassign(getUserAssessmentId(user.userId)!)"
                               [disabled]="!canUnassign(user)"
                               title="Unassign Assessment">
                               Unassign
@@ -87,16 +83,22 @@
 
       <!-- Scheduled Time -->
       <div class="form-group">
-        <label for="scheduledAt">Scheduled Start Time</label>
-        <input 
-          type="datetime-local" 
-          id="scheduledAt" 
-          formControlName="scheduledAt">
-        <div *ngIf="assignmentForm.get('scheduledAt')?.invalid && assignmentForm.get('scheduledAt')?.touched" 
-             class="error-message">
-          Scheduled start time is required.
-        </div>
-      </div>
+  <label for="scheduledAt">Scheduled Start Time</label>
+  <input 
+    type="datetime-local" 
+    id="scheduledAt" 
+    formControlName="scheduledAt">
+  
+  <div *ngIf="assignmentForm.get('scheduledAt')?.invalid && assignmentForm.get('scheduledAt')?.touched" 
+       class="error-message">
+    <span *ngIf="assignmentForm.get('scheduledAt')?.errors?.['required']">
+      Scheduled start time is required.
+    </span>
+    <span *ngIf="assignmentForm.get('scheduledAt')?.errors?.['pastDateTime']">
+      Scheduled start time cannot be in the past.
+    </span>
+  </div>
+</div>
 
       <!-- Form Actions -->
       <div class="form-actions">

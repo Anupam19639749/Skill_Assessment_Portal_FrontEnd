@@ -4,7 +4,15 @@ import { Auth } from '../../../services/auth';
 import {jwtDecode} from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs'; 
+import { Users } from '../../../Models/user.model';
 
+interface DecodedTokenPayload {
+  fullName: string;
+  email: string;
+  role: string; // Or the full claim URL if that's what the backend sends
+  // The claims sent by .NET are often 'nameid' and the full role claim URL
+  [key: string]: any; 
+}
 @Component({
   selector: 'app-layout',
   imports: [RouterOutlet, RouterLink, CommonModule, RouterLinkActive],
@@ -34,20 +42,31 @@ export class Layout implements OnInit, OnDestroy{
   updateUserInfo(token: string | null): void {
     if (token) {
       try {
-        const decodedToken: any = jwtDecode(token);
-        this.userName = decodedToken.fullName || decodedToken.email; // Fallback to email
-        const userRole = decodedToken.role || decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        this.isManager = userRole === 'Admin' || userRole === 'Evaluator';
-        this.isCandidate = userRole === 'Candidate';
+        const decodedToken: DecodedTokenPayload = jwtDecode(token);
+        
+        // Use the explicit claim mapping from the .NET backend for the role
+        const roleClaim = decodedToken.role || decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        const fullName = decodedToken.fullName || decodedToken.email; // Fallback logic is good
+
+        this.userName = fullName;
+        this.isManager = roleClaim === 'Admin' || roleClaim === 'Evaluator';
+        this.isCandidate = roleClaim === 'Candidate';
+
       } catch (error) {
         console.error('Error decoding token:', error);
+        // Ensure state is reset if token is invalid
+        this.resetUserState();
       }
     } else {
-      this.isLoggedIn = false;
-      this.isManager = false;
-      this.isCandidate = false;
-      this.userName = '';
+      this.resetUserState();
     }
+  }
+
+  resetUserState(): void {
+    this.isLoggedIn = false;
+    this.isManager = false;
+    this.isCandidate = false;
+    this.userName = '';
   }
 
   onLogout(): void {

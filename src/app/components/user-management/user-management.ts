@@ -1,22 +1,24 @@
 import { Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import { User } from '../../services/user';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Users } from '../../Models/user.model';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, DatePipe],
   templateUrl: './user-management.html',
   styleUrl: './user-management.css'
 })
+
 export class UserManagement implements OnInit {
-  users: any[] = [];
+  users: Users[] = []; // STRONGLY-TYPED
   roles = [{ roleId: 1, roleName: 'Admin' }, { roleId: 2, roleName: 'Candidate' }, { roleId: 3, roleName: 'Evaluator' }];
   userForm!: FormGroup;
   isEditMode = false;
-  selectedUser: any = null;
+  selectedUser: Users | null = null; // STRONGLY-TYPED
 
   constructor(private userService: User, private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
@@ -27,8 +29,8 @@ export class UserManagement implements OnInit {
 
   loadUsers(): void {
     this.userService.getAllUsers().subscribe(
-      (data) => {
-        this.users = data,
+      (data: Users[]) => { // STRONGLY-TYPED DATA
+        this.users = data;
         this.cdr.detectChanges(); 
       },
       (error) => {
@@ -45,7 +47,7 @@ export class UserManagement implements OnInit {
     });
   }
 
-  onEdit(user: any): void {
+  onEdit(user: Users): void { // STRONGLY-TYPED INPUT
     this.isEditMode = true;
     this.selectedUser = user;
     this.userForm.patchValue({
@@ -63,6 +65,7 @@ export class UserManagement implements OnInit {
     }
     if(confirm('Are you sure you want to Update this user?'))
     {
+      // The logic here is correct and relies on strongly-typed properties from selectedUser
       const newRoleId = this.userForm.get('roleId')?.value;
       if (this.selectedUser && newRoleId !== null) {
         this.userService.updateUserRole(this.selectedUser.userId, newRoleId).subscribe(

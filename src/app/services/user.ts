@@ -2,28 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../constants';
+import { Users } from '../Models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class User {
+// NOTE: Class name is 'User', we'll keep it as per your code.
+export class User { 
   private apiUrl = API_URL;
 
   constructor(private http: HttpClient) { }
 
   /**
    * Retrieves a list of all users from the backend.
-   * This is an admin/evaluator-only endpoint.
+   * Uses Users[] interface.
    */
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/users`);
+  getAllUsers(): Observable<Users[]> {
+    return this.http.get<Users[]>(`${this.apiUrl}/users`);
   }
 
   /**
    * Updates a user's role.
-   * This is an admin-only endpoint.
-   * @param userId The ID of the user to update.
-   * @param newRoleId The ID of the new role.
+   * No type change needed for this method.
    */
   updateUserRole(userId: number, newRoleId: number): Observable<void> {
     const body = { newRoleId: newRoleId }; 
@@ -32,8 +32,7 @@ export class User {
 
   /**
    * Deletes a user.
-   * This is an admin-only endpoint.
-   * @param userId The ID of the user to delete.
+   * No type change needed for this method.
    */
   deleteUser(userId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/users/${userId}`);
@@ -41,10 +40,9 @@ export class User {
 
   /**
    * Retrieves a single user's details by ID.
-   * This can be used for a user's own profile or by an admin.
-   * @param userId The ID of the user to retrieve.
+   * FIX: Changed Observable<User> to Observable<Users> (the model interface).
    */
-  getUserById(userId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/users/${userId}`);
+  getUserById(userId: number): Observable<Users> { 
+    return this.http.get<Users>(`${this.apiUrl}/users/${userId}`);
   }
 }

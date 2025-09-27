@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { CommonModule } from '@angular/common';
+import { UserLogin, UserRegister } from '../../Models/user.model';
 
 @Component({
   selector: 'app-auth-component',
@@ -43,13 +44,17 @@ export class AuthComponent implements OnInit {
 
   onSubmit(): void {
     if (this.authForm.invalid) {
+      this.authForm.markAllAsTouched(); // Add validation helper
       return;
     }
 
     const { email, password, fullName } = this.authForm.value;
 
     if (this.isLoginMode) {
-      this.authService.login({ email, password }).subscribe(
+      // STRONGLY-TYPED PAYLOAD: UserLogin
+      const credentials: UserLogin = { email, password };
+      
+      this.authService.login(credentials).subscribe(
         res => {
           this.authService.storeToken(res.token);
           this.router.navigate(['/home']);
@@ -60,7 +65,8 @@ export class AuthComponent implements OnInit {
         }
       );
     } else {
-      const userToRegister = {
+      // STRONGLY-TYPED PAYLOAD: UserRegister
+      const userToRegister: UserRegister = {
         email,
         password,
         fullName,

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { API_URL } from '../constants';
 import {jwtDecode} from 'jwt-decode';
+import { AuthResponse, UserLogin, UserRegister } from '../Models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +18,12 @@ export class Auth {
     return this.tokenSubject.asObservable();
   }
 
-  register(user: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, user);
+  register(user: UserRegister): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, user);
   }
 
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, credentials);
+  login(credentials: UserLogin): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, credentials);
   }
 
   // A simple method to store the token for later use
