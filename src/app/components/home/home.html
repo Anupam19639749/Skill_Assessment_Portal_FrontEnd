@@ -1,44 +1,59 @@
-<div class="home-container">
-  <h1>Welcome, {{ userName }}</h1>
+<div class="home-page-container">
+  
+  <div class="welcome-section">
+    <!-- <h1>Welcome, <span class="user-name">{{ userName }}</span>!</h1> -->
+    <h1><p class="tagline">Your gateway to skill development and assessment.</p></h1>
+  </div>
 
-  <div *ngIf="isCandidate" class="candidate-dashboard">
-    <h2>Your Assigned Assessments</h2>
-    <div class="assessment-list">
-      <div *ngIf="assignedAssessments.length === 0" class="no-assessments">
-        <p>You have no assessments assigned at the moment.</p>
-      </div>
-      <div *ngIf="assignedAssessments.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Assessment</th>
-              <th>Status</th>
-              <th>Scheduled At</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let assessment of assignedAssessments">
-              <td>{{ assessment.assessmentTitle }}</td>
-              <td>{{ statusMap[assessment.status] }}</td>
-              <td>{{ assessment.scheduledAt | date: 'medium' }}</td>
-              <td>
-                <button 
-                  class="btn-primary" 
-                  (click)="onStartAssessment(assessment.userAssessmentId)"
-                  [disabled]="assessment.status === 2">
-                  {{ assessment.status === 2 ? 'View Result' : 'Start/Resume' }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+  <div *ngIf="isCandidate" class="candidate-dashboard-section">
+    <h2 class="section-title">Your Active Assessments</h2>
+    
+    <div *ngIf="assignedAssessments.length === 0" class="no-active-assessments">
+      <p>You have no active assessments at the moment. Great job if you've completed them all!</p>
+      <p>View your past submissions on the <a routerLink="/my-submissions">My Submissions</a> page.</p>
+    </div>
+
+    <div *ngIf="assignedAssessments.length > 0" class="assessment-cards-grid">
+      <div *ngFor="let assessment of assignedAssessments" class="assessment-card">
+        <div class="card-header">
+          <h3 class="assessment-title">{{ assessment.assessmentTitle }}</h3>
+          <span class="assessment-status status-{{ assessment.status }}">
+            {{ getStatusDisplayName(assessment.status) }}
+          </span>
+        </div>
+        
+        <div class="card-body">
+          <div class="card-detail">
+            <span class="detail-label">Scheduled For:</span>
+            <span class="detail-value">{{ assessment.scheduledAt | date:'medium' }}</span>
+          </div>
+          <div class="card-detail" *ngIf="assessment.durationMinutes">
+            <span class="detail-label">Duration:</span>
+            <span class="detail-value">{{ assessment.durationMinutes }} Minutes</span>
+          </div>
+        </div>
+        
+        <div class="card-actions">
+          <button 
+            class="btn btn-primary" 
+            (click)="onStartAssessment(assessment.userAssessmentId)"
+            [disabled]="assessment.status === UserAssessmentStatus.Evaluated || assessment.status === UserAssessmentStatus.Submitted">
+            {{ assessment.status === UserAssessmentStatus.InProgress ? 'Resume Assessment' : 'Start Assessment' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="isManager" class="manager-dashboard">
-    <h2>Manager Dashboard</h2>
-    <p>Use the navigation bar to manage assessments and users.</p>
+  <div *ngIf="isManager" class="manager-dashboard-section">
+    <h2 class="section-title">Manager Dashboard</h2>
+    <p class="manager-info">Welcome, {{ userName }}. Use the navigation bar above to:</p>
+    <ul class="manager-actions-list">
+      <li><a routerLink="/assign-assessment" class="manager-action-link">Assign new assessments to users.</a></li>
+      <li><a routerLink="/assessments" class="manager-action-link">Manage existing assessment questions and details.</a></li>
+      <li><a routerLink="/users" class="manager-action-link">Manage user accounts and roles.</a></li>
+    </ul>
+    <p class="manager-tip">Your quick access links are always available in the navigation bar.</p>
   </div>
+
 </div>

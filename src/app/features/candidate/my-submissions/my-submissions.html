@@ -1,0 +1,62 @@
+<div class="my-submissions-container">
+  <h1 class="page-title">My Past Submissions</h1>
+
+  <div *ngIf="isLoading" class="loading-message">
+    <div class="spinner"></div>
+    <p>Loading your submitted assessments...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && submittedAssessments.length === 0" class="no-submissions-message">
+    <p>You haven't submitted any assessments yet.</p>
+    <p>Active and pending assessments can be found on your <a routerLink="/home">dashboard</a>.</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && submittedAssessments.length > 0" class="assessment-cards-grid">
+    <div *ngFor="let assessment of submittedAssessments" class="assessment-card">
+      <div class="card-header">
+        <h2 class="assessment-title">{{ assessment.assessmentTitle }}</h2>
+        <span class="assessment-status status-{{assessment.status}}">
+          {{ UserAssessmentStatus[assessment.status] }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <div class="card-detail">
+          <span class="detail-label">Scheduled For:</span>
+          <span class="detail-value">{{ assessment.scheduledAt | date:'medium' }}</span>
+        </div>
+        
+        <div class="card-detail" *ngIf="assessment.submittedAt">
+          <span class="detail-label">Submitted On:</span>
+          <span class="detail-value">{{ assessment.submittedAt | date:'medium' }}</span>
+        </div>
+
+        <div class="card-detail" *ngIf="assessment.totalMarksObtained !== null">
+          <span class="detail-label">Score:</span>
+          <span class="detail-value">{{ assessment.totalMarksObtained }}</span>
+          <span *ngIf="assessment.percentage !== null" class="percentage-value"> ({{ assessment.percentage | number:'1.0-2' }}%)</span>
+        </div>
+
+        <div class="card-detail" *ngIf="assessment.passed !== null">
+          <span class="detail-label">Result:</span>
+          <span class="detail-value result-{{ assessment.passed ? 'pass' : 'fail' }}">
+            {{ assessment.passed ? 'Passed' : 'Failed' }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="card-actions">
+        <button 
+          class="btn btn-primary" 
+          [routerLink]="getActionButtonRoute(assessment.userAssessmentId, assessment.status)"
+          [disabled]="!getActionButtonRoute(assessment.userAssessmentId, assessment.status)">
+          View Result
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

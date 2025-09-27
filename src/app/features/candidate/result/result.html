@@ -1,0 +1,90 @@
+<div class="result-container">
+  <h1 class="page-title">Assessment Result</h1>
+
+  <div *ngIf="isLoading" class="loading-message">
+    <div class="spinner"></div>
+    <p>Loading assessment results...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+    <button class="btn btn-secondary mt-3" routerLink="/my-submissions">Back to Submissions</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && overallAssessment" class="results-content">
+    
+    <div class="overall-summary-card">
+      <div class="summary-header">
+        <h2>{{ overallAssessment.assessmentTitle }}</h2>
+        <span class="overall-status status-{{ overallAssessment.status }}">
+          {{ getStatusDisplayName(overallAssessment.status) }}
+        </span>
+      </div>
+      
+      <div class="summary-body">
+        <div class="summary-detail">
+          <span class="detail-label">Scheduled On:</span>
+          <span class="detail-value">{{ overallAssessment.scheduledAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="summary-detail" *ngIf="overallAssessment.submittedAt">
+          <span class="detail-label">Submitted On:</span>
+          <span class="detail-value">{{ overallAssessment.submittedAt | date:'mediumDate' }}</span>
+        </div>
+        <div class="summary-detail" *ngIf="overallAssessment.durationMinutes">
+          <span class="detail-label">Duration:</span>
+          <span class="detail-value">{{ overallAssessment.durationMinutes }} Minutes</span>
+        </div>
+
+        <hr> <div class="summary-score-section" *ngIf="overallAssessment.totalMarksObtained !== null">
+          <span class="score-label">Total Score:</span>
+          <span class="score-value">{{ overallAssessment.totalMarksObtained }}</span>
+          <span *ngIf="overallAssessment.percentage !== null" class="score-percentage">
+            ({{ overallAssessment.percentage | number:'1.0-2' }}%)
+          </span>
+          <span 
+            *ngIf="overallAssessment.passed !== null" 
+            class="overall-result result-{{ overallAssessment.passed ? 'pass' : 'fail' }}">
+            {{ overallAssessment.passed ? 'PASSED' : 'FAILED' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Question Breakdown</h2>
+    <div class="question-results-grid">
+      <div *ngFor="let submission of detailedSubmissions; let i = index" class="question-card">
+        <div class="question-header">
+          <h3 class="question-number">Question {{ i + 1 }}</h3>
+          <span class="question-marks">
+            {{ submission.marksObtained }} / {{ submission.maxMarks }} Marks
+          </span>
+        </div>
+        <p class="question-text">{{ submission.questionText }}</p>
+
+        <div class="answers-section">
+          <div class="user-answer-container">
+            <span class="answer-label">Your Answer:</span>
+            <p class="user-answer" [class.correct]="submission.isCorrect" [class.incorrect]="!submission.isCorrect">
+              {{ submission.answerText || 'No text answer provided.' }}
+              <span *ngIf="submission.answerFilePath"> (File submitted: <a [href]="submission.answerFilePath" target="_blank">View File</a>)</span>
+            </p>
+          </div>
+          
+          <div class="correct-answer-container" *ngIf="submission.correctAnswer">
+            <span class="answer-label">Correct Answer:</span>
+            <p class="correct-answer">{{ submission.correctAnswer }}</p>
+          </div>
+        </div>
+        
+        <div class="feedback-section" *ngIf="submission.feedback">
+          <span class="feedback-label">Feedback:</span>
+          <p class="feedback-text">{{ submission.feedback }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <button class="btn btn-secondary" routerLink="/my-submissions">Back to My Submissions</button>
+    </div>
+  </div>
+</div>

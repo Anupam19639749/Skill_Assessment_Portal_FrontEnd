@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink  } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Auth } from '../../services/auth';
@@ -23,7 +23,8 @@ interface DecodedTokenPayload {
   standalone: true, // Mark as standalone
   imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './home.html',
-  styleUrls: ['./home.css'] // CORRECTED: styleUrl to styleUrls
+  styleUrls: ['./home.css'], // CORRECTED: styleUrl to styleUrls
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements OnInit{
   isLoggedIn = false;
@@ -31,6 +32,7 @@ export class Home implements OnInit{
   isCandidate = false;
   userName = '';
   assignedAssessments: UserAssessments[] = []; // STRONGLY-TYPED
+  UserAssessmentStatus = UserAssessmentStatus
 
   // Use the UserAssessmentStatus enum for direct access if needed, or map to strings
   statusMap: string[] = ['Not Started', 'In Progress', 'Submitted', 'Evaluated', 'Completed']; 
@@ -49,7 +51,6 @@ export class Home implements OnInit{
       try {
         const decodedToken: DecodedTokenPayload = jwtDecode(token);
         this.userName = decodedToken.fullName || decodedToken.email;
-        // Access role using either 'role' property or the full claim URL
         const userRole = decodedToken.role || decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         
         this.isManager = userRole === 'Admin' || userRole === 'Evaluator';
@@ -57,27 +58,43 @@ export class Home implements OnInit{
 
         if (this.isCandidate) {
           this.loadAssignedAssessments();
+        } else {
+            // For managers/admins, ensure any assessment list is cleared if not needed
+            this.assignedAssessments = []; 
+            this.cdr.detectChanges();
         }
       } catch (error) {
-        console.error('Error decoding token:', error);
-        // Reset login state if token is invalid
         this.resetUserState();
+        this.cdr.detectChanges();
       }
     } else {
       this.resetUserState();
+      this.cdr.detectChanges();
     }
   }
 
   loadAssignedAssessments(): void {
     const userId = this.getUserIdFromToken();
-    if (userId !== null) { // Check for null explicitly
-      this.userAssessmentService.getUserAssessments(userId).subscribe(
-        (data: UserAssessments[]) => { // STRONGLY-TYPED DATA
-          this.assignedAssessments = data;
-          this.cdr.detectChanges();
+    if (userId !== null) {
+      this.userAssessmentService.getUserAssessments(userId).subscribe({
+        next: (data: UserAssessments[]) => {
+          // --- REVISED: Filter to show only NotStarted or InProgress ---
+          this.assignedAssessments = data.filter(ua =>
+            ua.status === UserAssessmentStatus.NotStarted ||
+            ua.status === UserAssessmentStatus.InProgress
+          );
+          this.cdr.detectChanges(); // Manually trigger change detection
         },
-        (error) => console.error('Error fetching assessments', error)
-      );
+        error: (error) => {
+          console.error('Error fetching assessments', error);
+          // Optionally, set an errorMessage property here for display in HTML
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+        // Handle case where user ID is not found (e.g., redirect to login)
+        this.router.navigate(['/login']);
+        this.cdr.detectChanges();
     }
   }
 
@@ -95,11 +112,9 @@ export class Home implements OnInit{
     if (token) {
       try {
         const decodedToken: DecodedTokenPayload = jwtDecode(token);
-        // Access userId using either 'nameid' or the full claim URL
         const userIdClaim = decodedToken.nameid || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-        return userIdClaim ? +userIdClaim : null; // Convert to number
+        return userIdClaim ? +userIdClaim : null;
       } catch (error) {
-        console.error('Error parsing User ID from token:', error);
         return null;
       }
     }
@@ -112,5 +127,10 @@ export class Home implements OnInit{
     this.isCandidate = false;
     this.userName = '';
     this.assignedAssessments = [];
+  }
+  
+  // Utility for displaying status (using enum directly)
+  getStatusDisplayName(status: UserAssessmentStatus): string {
+    return UserAssessmentStatus[status];
   }
 }

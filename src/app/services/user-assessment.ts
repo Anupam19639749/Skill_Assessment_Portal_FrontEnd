@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../constants';
 import {AssignAssessmentPayload, UserAssessments } from '../Models/user-assessment.model';
+import { DetailedSubmission } from '../Models/detailed-submission.model';
 
 @Injectable({
   providedIn: 'root'
@@ -89,5 +90,10 @@ export class UserAssessment {
    */
   unassignAssessment(userAssessmentId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/userassessments/${userAssessmentId}`);
+  }
+
+  // --- NEW METHOD: To get detailed submission results for a user assessment ---
+  getDetailedSubmissionResults(userAssessmentId: number): Observable<DetailedSubmission[]> {
+    return this.http.get<DetailedSubmission[]>(`${this.apiUrl}/Submissions/by-user-assessment/${userAssessmentId}`);
   }
 }
