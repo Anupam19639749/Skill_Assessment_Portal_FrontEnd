@@ -1,0 +1,201 @@
+<div class="assessment-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-screen">
+    <div class="loading-spinner"></div>
+    <p>Loading assessment...</p>
+  </div>
+
+  <!-- Main Assessment Interface -->
+  <div *ngIf="!isLoading && isTestActive && questions.length > 0" class="assessment-interface">
+    
+    <!-- Header with Timer and Progress -->
+    <header class="assessment-header">
+      <div class="header-left">
+        <h1 class="assessment-title">{{ userAssessment.assessmentTitle }}</h1>
+        <div class="progress-info">
+          <span class="answered-count">{{ getAnsweredCount() }}/{{ questions.length }} Answered</span>
+          <span *ngIf="getFlaggedCount() > 0" class="flagged-count">{{ getFlaggedCount() }} Flagged</span>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <div class="timer-display" [class.urgent]="timeLeftSeconds < 300" [class.critical]="timeLeftSeconds < 60">
+          <span class="timer-icon">⏱️</span>
+          <div class="timer-text">
+            <div class="time-value">{{ formatTime(timeLeftSeconds) }}</div>
+            <div class="time-label">Time Remaining</div>
+          </div>
+        </div>
+        
+        <div *ngIf="lastAutoSave" class="auto-save-info">
+          Last saved: {{ lastAutoSave | date:'HH:mm:ss' }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Question Navigator (Sidebar) -->
+    <div class="assessment-body">
+      <aside class="question-navigator">
+        <h3>Questions</h3>
+        <div class="question-grid">
+          <button 
+            *ngFor="let question of questions; let i = index"
+            class="question-nav-btn"
+            [class.current]="i === currentQuestionIndex"
+            [class.answered]="questionStatus[question.questionId] === 'answered'"
+            [class.flagged]="questionStatus[question.questionId] === 'flagged'"
+            (click)="goToQuestion(i)">
+            <span class="question-number">{{ i + 1 }}</span>
+            <span class="status-icon">{{ getQuestionStatusIcon(i) }}</span>
+          </button>
+        </div>
+        
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-color current"></span>
+            <span>Current</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color answered"></span>
+            <span>Answered</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color flagged"></span>
+            <span>Flagged</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Question Area -->
+      <main class="question-area">
+        <div class="question-header">
+          <div class="question-counter">
+            Question {{ currentQuestionIndex + 1 }} of {{ questions.length }}
+          </div>
+          
+          <div class="question-actions">
+            <button 
+              class="btn-flag" 
+              [class.flagged]="questionStatus[questions[currentQuestionIndex].questionId] === 'flagged'"
+              (click)="flagQuestion()">
+              🚩 {{ questionStatus[questions[currentQuestionIndex].questionId] === 'flagged' ? 'Unflag' : 'Flag' }}
+            </button>
+            
+            <button 
+              class="btn-save"
+              [disabled]="isSaving"
+              (click)="saveCurrentAnswer()">
+              <span *ngIf="isSaving">💾 Saving...</span>
+              <span *ngIf="!isSaving">💾 Save</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <div class="question-meta">
+            <span class="marks-badge">{{ questions[currentQuestionIndex].maxMarks }} Marks</span>
+            <span class="difficulty-badge" [class]="'difficulty-' + questions[currentQuestionIndex].difficultyLevel">
+              {{ questions[currentQuestionIndex].difficultyLevel === 0 ? 'Easy' : 
+                 questions[currentQuestionIndex].difficultyLevel === 1 ? 'Medium' : 'Hard' }}
+            </span>
+            <span class="question-type-badge">
+              {{ questions[currentQuestionIndex].questionType === 0 ? 'Multiple Choice' : 'Descriptive' }}
+            </span>
+          </div>
+          
+          <div class="question-content">
+            <h2 class="question-text">{{ questions[currentQuestionIndex].questionText }}</h2>
+            
+            <div *ngIf="questions[currentQuestionIndex].referenceFilePath" class="reference-section">
+              <span class="reference-label">📎 Reference Material:</span>
+              <a [href]="questions[currentQuestionIndex].referenceFilePath" 
+                 target="_blank" 
+                 class="reference-link">
+                View Attached File
+              </a>
+            </div>
+          </div>
+
+          <div class="answer-section">
+            <!-- Multiple Choice Questions -->
+            <div *ngIf="questions[currentQuestionIndex].questionType === 0" class="mcq-container">
+              <h3 class="answer-label">Select your answer:</h3>
+              <div class="mcq-options">
+                <div *ngFor="let option of questions[currentQuestionIndex].options; let i = index" 
+                     class="mcq-option">
+                  <input 
+                    type="radio" 
+                    name="mcq-answer" 
+                    [id]="'option-' + i" 
+                    [value]="option" 
+                    [(ngModel)]="currentAnswer"
+                    class="mcq-input">
+                  <label [for]="'option-' + i" class="mcq-label">
+                    <span class="option-marker">{{ getOptionLetter(i) }}</span>
+                    <span class="option-text">{{ option }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text/Descriptive Questions -->
+            <div *ngIf="questions[currentQuestionIndex].questionType !== 0" class="text-answer-container">
+              <h3 class="answer-label">Your Answer:</h3>
+              <textarea 
+                class="answer-textarea"
+                rows="8" 
+                placeholder="Type your answer here..."
+                [(ngModel)]="currentAnswer"
+                [disabled]="questions[currentQuestionIndex].questionType !== 1">
+              </textarea>
+              
+              <div *ngIf="questions[currentQuestionIndex].questionType !== 1" class="answer-note">
+                <em>Note: This question type ({{ questions[currentQuestionIndex].questionType === 2 ? 'Coding' : 'File Upload' }}) 
+                is temporarily disabled in this interface.</em>
+              </div>
+              
+              <div class="character-count">
+                {{ currentAnswer.length }} characters
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    
+    <!-- Footer Navigation -->
+    <footer class="assessment-footer">
+      <div class="nav-controls">
+        <button 
+          class="btn-nav btn-previous" 
+          [disabled]="currentQuestionIndex === 0"
+          (click)="changeQuestion(-1)">
+          ← Previous
+        </button>
+        
+        <button 
+          class="btn-nav btn-next" 
+          [disabled]="currentQuestionIndex === questions.length - 1"
+          (click)="changeQuestion(1)">
+          Next →
+        </button>
+      </div>
+      
+      <div class="submit-controls">
+        <button 
+          class="btn-submit btn-final-submit"
+          (click)="finalSubmit(false)">
+          🚀 Submit Assessment
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Error/Completion State -->
+  <div *ngIf="!isLoading && !isTestActive" class="completion-screen">
+    <div class="completion-message">
+      <h2>Assessment Completed</h2>
+      <p>Thank you for taking the assessment. Redirecting...</p>
+    </div>
+  </div>
+</div>

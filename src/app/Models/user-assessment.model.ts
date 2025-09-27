@@ -26,17 +26,17 @@ export interface UserAssessments { // Changed from UserAssessment to UserAssessm
 }
 
 // Payload for assigning assessments
-export interface AssignAssessmentPayload { // More descriptive name
+export interface AssignAssessmentPayload { 
   assessmentId: number;
   userIds: number[];
   scheduledAt: Date; // Send as ISO string, TypeScript Date object works
 }
 
-// Example: Interface for a submission (if you have one later)
-export interface UserSubmission {
-  userAssessmentId: number;
-  questionId: number;
-  answerText?: string;
-  submittedFilePath?: string;
-  marksObtained?: number;
-}
+// // Example: Interface for a submission (if you have one later)
+// export interface UserSubmission {
+//   userAssessmentId: number;
+//   questionId: number;
+//   answerText?: string;
+//   submittedFilePath?: string;
+//   marksObtained?: number;
+// }

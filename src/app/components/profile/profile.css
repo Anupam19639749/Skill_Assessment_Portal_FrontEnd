@@ -1,0 +1,224 @@
+/* Styling for profile component */
+.profile-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2.5rem;
+    font-size: 2.2rem;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 0.8rem;
+}
+
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 5px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.profile-grid {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.profile-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    flex: 1 1 45%; /* Allows cards to flex on desktop, stack on mobile */
+    min-width: 320px;
+}
+
+.profile-card h3 {
+    color: #34495e;
+    margin-bottom: 1.8rem;
+    font-size: 1.6rem;
+    border-bottom: 1px dashed #e0e0e0;
+    padding-bottom: 0.6rem;
+    text-align: center;
+}
+
+.profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.profile-img-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 4px solid #3498db;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #555;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box; /* Ensures padding doesn't expand width */
+    background-color: #fdfdfd;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+input[disabled], select[disabled] {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    border: 1px solid #ced4da;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+    color: #333;
+}
+
+/* Validation and Errors */
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    padding-left: 5px;
+}
+
+/* Buttons */
+.form-actions {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+.form-actions button, .btn-primary {
+    padding: 0.8rem 1.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Blue for primary actions like Edit */
+    color: white;
+}
+
+.btn-primary:hover:not([disabled]) {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.form-actions button[type="submit"] {
+    background-color: #28a745; /* Green for Save/Update */
+    color: white;
+}
+
+.form-actions button[type="submit"]:hover:not([disabled]) {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+
+.form-actions button[disabled], .btn-primary[disabled] {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: translateY(0);
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+    .profile-grid {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .profile-card {
+        flex: 1 1 100%;
+        padding: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .profile-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-img-preview {
+        width: 100px;
+        height: 100px;
+    }
+}

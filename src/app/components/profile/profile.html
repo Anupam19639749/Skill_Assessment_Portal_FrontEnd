@@ -1,0 +1,125 @@
+<div class="profile-container">
+  <h2>My Profile</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div class="profile-grid">
+    
+    <div class="profile-card profile-details">
+      <h3>User Details</h3>
+      
+      <div class="profile-picture-section">
+        <img 
+            [src]="profileForm.get('profilePicturePath')?.value || '/images/default-profile.png'" 
+            alt="Profile Picture" 
+            class="profile-img-preview">
+        <button type="button" class="btn btn-primary" (click)="toggleEditMode()">
+          {{ isEditMode ? 'Cancel Edit' : 'Edit Profile' }}
+        </button>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="user-details-form">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input id="fullName" formControlName="fullName" type="text" [attr.disabled]="!isEditMode ? true : null">
+          <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="error-message">
+            Full Name is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" formControlName="email" type="email" [attr.disabled]="!isEditMode ? true : null">
+          <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="error-message">
+            <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required.</span>
+            <span *ngIf="profileForm.get('email')?.errors?.['email']">Enter a valid email.</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="profilePicturePath">Profile Picture URL</label>
+            <input id="profilePicturePath" formControlName="profilePicturePath" type="url" [attr.disabled]="!isEditMode ? true : null">
+            <div *ngIf="profileForm.get('profilePicturePath')?.invalid && profileForm.get('profilePicturePath')?.touched" class="error-message">
+                Please enter a valid URL.
+            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" formControlName="gender" [attr.disabled]="!isEditMode ? true : null">
+            <option value="">-- Select Gender --</option>
+            <option *ngFor="let gender of genderOptions" [value]="gender">{{ gender }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="highestQualification">Highest Qualification</label>
+          <select id="highestQualification" formControlName="highestQualification" [attr.disabled]="!isEditMode ? true : null">
+            <option value="">-- Select Qualification --</option>
+            <option *ngFor="let qual of qualificationOptions" [value]="qual">{{ qual }}</option>
+          </select>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input id="isEmployed" formControlName="isEmployed" type="checkbox" [attr.disabled]="!isEditMode ? true : null">
+          <label for="isEmployed">Currently Employed</label>
+        </div>
+
+        <div class="form-group" *ngIf="profileForm.get('isEmployed')?.value">
+          <label for="currentRole">Current Role</label>
+          <input id="currentRole" formControlName="currentRole" type="text" [attr.disabled]="!isEditMode ? true : null">
+          <div *ngIf="profileForm.get('currentRole')?.invalid && profileForm.get('currentRole')?.touched" class="error-message">
+            Current Role is required if employed.
+          </div>
+        </div>
+        <div class="form-group">
+            <label>Role:</label>
+            <input [value]="user?.roleName || 'Loading...'" type="text" disabled>
+        </div>
+        <div class="form-group">
+            <label>Member Since:</label>
+            <input [value]="user?.createdAt | date: 'mediumDate'" type="text" disabled>
+        </div>
+        
+        <div class="form-actions" *ngIf="isEditMode">
+          <button type="submit" [disabled]="profileForm.invalid">Save Changes</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="profile-card password-change">
+      <h3>Change Password</h3>
+      <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+        <div class="form-group">
+          <label for="currentPassword">Current Password</label>
+          <input formControlName="currentPassword" id="currentPassword" type="password">
+          <div *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" class="error-message">
+            Current password is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="newPassword">New Password</label>
+          <input formControlName="newPassword" id="newPassword" type="password">
+          <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" class="error-message">
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required.</span>
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Must be at least 6 characters.</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input formControlName="confirmPassword" id="confirmPassword" type="password">
+          <div *ngIf="passwordForm.get('confirmPassword')?.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched" class="error-message">
+            Passwords do not match.
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" [disabled]="passwordForm.invalid">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

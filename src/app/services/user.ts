@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../constants';
-import { Users } from '../Models/user.model';
+import { Users, UserProfileUpdate, UserPasswordUpdate } from '../Models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +44,13 @@ export class User {
    */
   getUserById(userId: number): Observable<Users> { 
     return this.http.get<Users>(`${this.apiUrl}/users/${userId}`);
+  }
+
+   updateUserProfile(userId: number, profileData: UserProfileUpdate): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.apiUrl}/users/${userId}/profile`, profileData);
+  }
+
+  changeUserPassword(userId: number, passwordData: UserPasswordUpdate): Observable<{ message: string }> {
+    return this.http.put<{ message: string }>(`${this.apiUrl}/users/${userId}/password`, passwordData);
   }
 }

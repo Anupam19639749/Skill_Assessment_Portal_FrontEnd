@@ -1,6 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive} from '@angular/router';
 import { Auth } from '../../../services/auth';
+import { User } from '../../../services/user';
+import { NavigationService } from '../../../services/navigation.service';
 import {jwtDecode} from 'jwt-decode';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs'; 
@@ -9,34 +11,60 @@ import { Users } from '../../../Models/user.model';
 interface DecodedTokenPayload {
   fullName: string;
   email: string;
-  role: string; // Or the full claim URL if that's what the backend sends
-  // The claims sent by .NET are often 'nameid' and the full role claim URL
+  role: string; 
+  nameid?: string;
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'?: string;
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
   [key: string]: any; 
 }
+
 @Component({
   selector: 'app-layout',
+  standalone: true,
   imports: [RouterOutlet, RouterLink, CommonModule, RouterLinkActive],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class Layout implements OnInit, OnDestroy{
-  isLoggedIn = false;
-  isManager = false;
-  isCandidate = false;
-  userName = '';
+export class Layout implements OnInit, OnDestroy {
+  isLoggedIn: boolean = false;
+  isManager: boolean = false;
+  isCandidate: boolean = false;
+  userName: string = 'Guest';
+  showNavigation: boolean = true;
+  isScrolled: boolean = false;
+
+  userProfilePath: string | null = null;
+  currentUserId: number | null = null;
 
   private tokenSubscription!: Subscription; 
-  constructor(private authService: Auth, public router: Router) { }
+  private navigationSubscription!: Subscription;
+
+  constructor(
+    private authService: Auth, 
+    public router: Router, 
+    private userService: User,
+    private navigationService: NavigationService
+  ) { }
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    this.isScrolled = window.pageYOffset > 20;
+  }
 
   ngOnInit(): void {
     this.tokenSubscription = this.authService.getTokenStream().subscribe(token => {
       this.isLoggedIn = !!token;
       this.updateUserInfo(token);
     });
+
+    this.navigationSubscription = this.navigationService.showNavigation$.subscribe(
+      show => this.showNavigation = show
+    );
   }
 
   ngOnDestroy(): void {
-    this.tokenSubscription.unsubscribe(); // Prevent memory leaks
+    this.tokenSubscription.unsubscribe();
+    this.navigationSubscription.unsubscribe();
   }
 
   updateUserInfo(token: string | null): void {
@@ -44,17 +72,32 @@ export class Layout implements OnInit, OnDestroy{
       try {
         const decodedToken: DecodedTokenPayload = jwtDecode(token);
         
-        // Use the explicit claim mapping from the .NET backend for the role
         const roleClaim = decodedToken.role || decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        const fullName = decodedToken.fullName || decodedToken.email; // Fallback logic is good
+        const fullName = decodedToken.fullName || decodedToken.email;
+
+        const userIdClaim = decodedToken.nameid || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        this.currentUserId = userIdClaim ? +userIdClaim : null;
 
         this.userName = fullName;
         this.isManager = roleClaim === 'Admin' || roleClaim === 'Evaluator';
         this.isCandidate = roleClaim === 'Candidate';
+        
+        if (this.currentUserId) {
+          this.userService.getUserById(this.currentUserId).subscribe({
+            next: (user: Users) => {
+              this.userProfilePath = user.profilePicturePath || null;
+            },
+            error: (err) => {
+              console.error('Failed to load user profile for navbar:', err);
+              this.userProfilePath = null;
+            }
+          });
+        } else {
+          this.userProfilePath = null;
+        }
 
       } catch (error) {
         console.error('Error decoding token:', error);
-        // Ensure state is reset if token is invalid
         this.resetUserState();
       }
     } else {
@@ -67,10 +110,13 @@ export class Layout implements OnInit, OnDestroy{
     this.isManager = false;
     this.isCandidate = false;
     this.userName = '';
+    this.userProfilePath = null;
+    this.currentUserId = null;
   }
 
   onLogout(): void {
     this.authService.logout();
+    this.navigationService.showNavigation();
     this.router.navigate(['/login']);
   }
 }

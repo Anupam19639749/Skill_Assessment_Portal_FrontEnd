@@ -7,6 +7,8 @@ import { AssessmentManagement } from './components/assessment/assessment-managem
 import { QuestionManagement } from './components/assessment/question-management/question-management';
 import { UserManagement } from './components/user-management/user-management';
 import { AssignAssessment } from './components/assign-assessment/assign-assessment';
+import { Profile } from './components/profile/profile';
+import { TakeAssessment } from './components/candidate/take-assessment/take-assessment';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,5 +37,15 @@ export const routes: Routes = [
         component: AssignAssessment,
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['Admin', 'Evaluator'] }
+   },
+   {
+        path: 'profile',
+        component: Profile,
+        canActivate: [AuthGuard]
+   },
+   {
+        path: 'take-assessment/:userAssessmentId',
+        component: TakeAssessment,
+        canActivate: [AuthGuard]
    }
 ];

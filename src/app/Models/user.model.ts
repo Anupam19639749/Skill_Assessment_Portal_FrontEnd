@@ -11,10 +11,14 @@ export interface Users { // Changed from User to Users
   userId: number;
   fullName: string;
   email: string;
-  roleName: string; // The role name string
-  profilePicturePath?: string | null; // Optional, can be null
+  roleName: string; 
   createdAt: Date;
   updatedAt: Date;
+  profilePicturePath?: string;
+  gender?: string;
+  highestQualification?: string;
+  isEmployed?: boolean;
+  currentRole?: string;
 }
 
 export interface UserLogin {
@@ -32,4 +36,20 @@ export interface UserRegister {
 // Interface for updating user role (if needed in a User Management component)
 export interface UserRoleUpdate {
   newRoleId: number;
+}
+
+export interface UserProfileUpdate {
+    fullName?: string;
+    email?: string;
+    profilePicturePath?: string;
+    gender?: string;
+    highestQualification?: string;
+    isEmployed?: boolean;
+    currentRole?: string;
+}
+
+// DTO for password changes
+export interface UserPasswordUpdate {
+    currentPassword: string;
+    newPassword: string;
 }

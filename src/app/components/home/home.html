@@ -26,7 +26,7 @@
                 <button 
                   class="btn-primary" 
                   (click)="onStartAssessment(assessment.userAssessmentId)"
-                  [disabled]="assessment.status === 1 || assessment.status === 2">
+                  [disabled]="assessment.status === 2">
                   {{ assessment.status === 2 ? 'View Result' : 'Start/Resume' }}
                 </button>
               </td>
