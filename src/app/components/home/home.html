@@ -1,16 +1,23 @@
 <div class="home-container">
   
   <!-- Welcome Header -->
-  <div class="welcome-header">
+  <!-- <div class="welcome-header">
+    <div class="welcome-content">
+      <h2 class="welcome-title">
+        <p >Your gateway to skill development and assessment</p>
+      </h2>
+    </div>
+  </div> -->
+
+  <!-- Candidate Dashboard -->
+  <div *ngIf="isCandidate" class="candidate-section">
+    <div class="welcome-header">
     <div class="welcome-content">
       <h2 class="welcome-title">
         <p >Your gateway to skill development and assessment</p>
       </h2>
     </div>
   </div>
-
-  <!-- Candidate Dashboard -->
-  <div *ngIf="isCandidate" class="candidate-section">
     <div class="section-header">
       <h2 class="section-title">Your Active Assessments</h2>
       <p class="section-subtitle">Complete your assigned assessments to showcase your skills</p>
@@ -113,26 +120,37 @@
     </div>
     
     <!-- Quick Stats -->
-    <div class="stats-section">
-      <div class="stats-header">
-        <h3 class="stats-title">Quick Overview</h3>
-      </div>
+    <div class="stats-card-container">
+    <div class="stats-header">
+      <h3 class="stats-title">Quick Overview</h3>
+    </div>
+    <div *ngIf="isStatsLoading; else statsContent" class="loading-message">
+      <div class="spinner"></div>
+      <p>Fetching live data...</p>
+    </div>
+
+    <ng-template #statsContent>
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-value">--</div>
+          <span class="stat-icon">👥</span> <div class="stat-value">{{ adminStats?.totalUsers || 0 }}</div>
           <div class="stat-label">Total Users</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">--</div>
+          <span class="stat-icon">📝</span> <div class="stat-value">{{ adminStats?.totalAssessments || 0 }}</div>
           <div class="stat-label">Assessments</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">--</div>
+          <span class="stat-icon">✅</span> <div class="stat-value">{{ adminStats?.totalAssignments || 0 }}</div>
+          <div class="stat-label">Assignments</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏆</span> <div class="stat-value">{{ adminStats?.totalCompleted || 0 }}</div>
           <div class="stat-label">Completed</div>
         </div>
       </div>
-      <p class="stats-note">Connect to your API to show live data</p>
-    </div>
+    </ng-template>
+  </div>
+
   </div>
 
 </div>

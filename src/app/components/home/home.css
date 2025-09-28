@@ -10,7 +10,7 @@
 .welcome-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 1rem;
-  padding: 3rem 2rem;
+  padding: 2rem 1.5rem;
   margin-bottom: 3rem;
   color: white;
   text-align: center;
@@ -321,57 +321,142 @@
 }
 
 /* Stats Section */
-.stats-section {
-  background: white;
-  border-radius: 1rem;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+/* --- Admin Dashboard Quick Overview Styles --- */
+
+.manager-dashboard-section {
+  padding: 30px;
+  background-color: #f0f2f5; /* Lighter background for the dashboard area */
+  border-radius: 10px;
+  margin-top: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.section-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stats-card-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  padding: 25px;
+  margin-bottom: 30px;
 }
 
 .stats-header {
-  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+  text-align: left;
 }
 
 .stats-title {
-  font-size: 1.25rem;
+  font-size: 1.5em;
   font-weight: 600;
-  color: #1e293b;
+  color: #5c6bc0; /* A nice blue for the title */
   margin: 0;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+  gap: 25px;
+  justify-content: center; 
 }
 
 .stat-card {
+  background-color: #f7f9fc; /* Very light blue/gray background for cards */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
   text-align: center;
-  padding: 1rem;
-  background: #f8fafc;
-  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: #9fa8da; /* Highlight border on hover */
+}
+
+.stat-icon {
+  font-size: 1.5em; /* Larger icons */
+  margin-bottom: 10px;
+  color: #5c6bc0; /* Icon color */
+  display: block; /* Ensure margin works */
 }
 
 .stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.25rem;
+  font-size: 2.5em; /* Larger value font */
+  font-weight: 800;
+  color: #3f51b5; /* Primary blue color */
+  margin: 0 0 5px 0;
+  line-height: 1; /* Adjust line height for cleaner look */
 }
 
 .stat-label {
-  font-size: 0.875rem;
-  color: #64748b;
+  font-size: 0.9em;
+  color: #616161;
+  margin: 0;
   font-weight: 500;
+  letter-spacing: 0.05em;
 }
 
-.stats-note {
-  font-size: 0.875rem;
-  color: #64748b;
+.loading-message {
   text-align: center;
-  margin: 0;
+  padding: 30px;
+  color: #7f8c8d;
   font-style: italic;
+  font-size: 1.1em;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #5c6bc0;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.manager-tip {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 0.9em;
+  margin-top: 30px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .manager-dashboard-section {
+    padding: 20px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr; /* Stack cards vertically on smaller mobile */
+  }
+  .stat-value {
+    font-size: 2em;
+  }
+  .stat-icon {
+    font-size: 2em;
+  }
 }
 
 /* Responsive Design */

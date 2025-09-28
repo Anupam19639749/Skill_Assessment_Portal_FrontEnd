@@ -5,6 +5,7 @@ import { Auth } from '../../services/auth';
 import { UserAssessment } from '../../services/user-assessment';
 import { jwtDecode } from 'jwt-decode';
 import { UserAssessments, UserAssessmentStatus } from '../../Models/user-assessment.model';
+import { Dashboard } from '../../services/dashboard';
 
 // Define an interface for the raw decoded JWT payload
 interface DecodedTokenPayload {
@@ -31,17 +32,21 @@ export class Home implements OnInit{
   isManager = false;
   isCandidate = false;
   userName = '';
-  assignedAssessments: UserAssessments[] = []; // STRONGLY-TYPED
+  assignedAssessments: UserAssessments[] = [];
   UserAssessmentStatus = UserAssessmentStatus
 
-  // Use the UserAssessmentStatus enum for direct access if needed, or map to strings
   statusMap: string[] = ['Not Started', 'In Progress', 'Submitted', 'Evaluated', 'Completed']; 
+
+  // Dashboard Stats Properties
+  adminStats: { totalUsers: number, totalAssessments: number, totalAssignments: number, totalCompleted: number } | null = null;
+  isStatsLoading: boolean = false;
 
   constructor(
     private authService: Auth,
     private router: Router,
     private userAssessmentService: UserAssessment,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dashboardService: Dashboard
   ) { }
 
   ngOnInit(): void {
@@ -60,6 +65,7 @@ export class Home implements OnInit{
           this.loadAssignedAssessments();
         } else {
             // For managers/admins, ensure any assessment list is cleared if not needed
+            this.loadAdminStats();
             this.assignedAssessments = []; 
             this.cdr.detectChanges();
         }
@@ -71,6 +77,21 @@ export class Home implements OnInit{
       this.resetUserState();
       this.cdr.detectChanges();
     }
+  }
+  loadAdminStats(): void {
+    this.isStatsLoading = true;
+    this.dashboardService.getAdminStats().subscribe({
+      next: (stats) => {
+        this.adminStats = stats;
+        this.isStatsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching admin stats:', err);
+        this.isStatsLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   loadAssignedAssessments(): void {
