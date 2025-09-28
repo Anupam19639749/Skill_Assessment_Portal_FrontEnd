@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, FormArray, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,8 @@ import { Question, QuestionType, DifficultyLevel, CreateQuestionDto } from '../.
   standalone: true, // Mark as standalone
   imports: [FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './question-management.html',
-  styleUrls: ['./question-management.css'] // CORRECTED: styleUrl to styleUrls
+  styleUrls: ['./question-management.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuestionManagement implements OnInit{
   assessmentId!: number;
@@ -20,11 +21,11 @@ export class QuestionManagement implements OnInit{
   selectedQuestionId: number | null = null;
   
   // Directly use enum values for question types and difficulty levels from the model
-  questionTypes: { value: QuestionType, name: string }[] = [
-    { value: QuestionType.MCQ, name: 'MCQ' },
-    { value: QuestionType.Descriptive, name: 'Descriptive' },
-    { value: QuestionType.Coding, name: 'Coding' },
-    { value: QuestionType.FileUpload, name: 'FileUpload' }
+  questionTypes: { value: QuestionType, name: string, disabled: boolean}[] = [
+    { value: QuestionType.MCQ, name: 'MCQ', disabled: false },
+    { value: QuestionType.Descriptive, name: 'Descriptive', disabled: true },
+    { value: QuestionType.Coding, name: 'Coding', disabled: true },
+    { value: QuestionType.FileUpload, name: 'FileUpload', disabled: true }
   ];
   difficultyLevels: { value: DifficultyLevel, name: string }[] = [
     { value: DifficultyLevel.Easy, name: 'Easy' },

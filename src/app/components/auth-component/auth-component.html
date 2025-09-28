@@ -1,29 +1,46 @@
 <div class="auth-container">
   <div class="auth-card">
-    <h2>{{ isLoginMode ? 'Login' : 'Register' }}</h2>
+    <h2>{{ isLoginMode ? 'Sign In' : 'Create Account' }}</h2>
+
+    <div *ngIf="errorMessage" class="error-msg">{{ errorMessage }}</div>
+
     <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
-      
-      <div class="form-group" *ngIf="!isLoginMode">
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" formControlName="fullName" required>
+      <div *ngIf="!isLoginMode" class="form-group">
+        <label>Full Name</label>
+        <input type="text" formControlName="fullName" placeholder="Enter full name">
+        <div *ngIf="authForm.get('fullName')?.invalid && authForm.get('fullName')?.touched" class="input-error">
+          Full name is required
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" formControlName="email" required>
+        <label>Email</label>
+        <input type="email" formControlName="email" placeholder="Enter email">
+        <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="input-error">
+          <span *ngIf="authForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="authForm.get('email')?.errors?.['email']">Enter a valid email</span>
+        </div>
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password" required>
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="Enter password">
+        <div *ngIf="authForm.get('password')?.invalid && authForm.get('password')?.touched" class="input-error">
+          <span *ngIf="authForm.get('password')?.errors?.['required']">Password is required</span>
+          <span *ngIf="authForm.get('password')?.errors?.['minlength']">At least 6 characters</span>
+        </div>
       </div>
 
-      <button type="submit" [disabled]="authForm.invalid">{{ isLoginMode ? 'Login' : 'Register' }}</button>
+      <button type="submit" [disabled]="authForm.invalid || isLoading">
+        {{ isLoading ? (isLoginMode ? 'Signing In...' : 'Creating Account...') : (isLoginMode ? 'Sign In' : 'Create Account') }}
+      </button>
     </form>
-    
+
     <p class="switch-mode">
       {{ isLoginMode ? "Don't have an account?" : "Already have an account?" }}
-      <a (click)="onSwitchMode()">{{ isLoginMode ? 'Register here' : 'Login here' }}</a>
+      <button (click)="onSwitchMode()">{{ isLoginMode ? 'Sign up here' : 'Sign in here' }}</button>
     </p>
+
+    <p class="back-home"><a routerLink="/">← Back to Home</a></p>
   </div>
 </div>

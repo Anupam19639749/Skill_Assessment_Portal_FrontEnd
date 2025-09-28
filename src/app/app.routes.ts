@@ -11,10 +11,13 @@ import { Profile } from './components/profile/profile';
 import { TakeAssessment } from './components/candidate/take-assessment/take-assessment';
 import { MySubmissions } from './features/candidate/my-submissions/my-submissions';
 import { Result } from './features/candidate/result/result';
+import { LandingComponent } from './components/landing-component/landing-component';
+
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', component: LandingComponent},
     { path: 'login', component:   AuthComponent },
+    { path: 'register', component: AuthComponent },
     { path: 'home', component: Home, canActivate: [AuthGuard] },
     {
         path: 'assessments',

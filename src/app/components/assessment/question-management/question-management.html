@@ -16,7 +16,7 @@
         <div class="form-group-item">
           <label for="questionType">Question Type</label>
           <select id="questionType" formControlName="questionType">
-            <option *ngFor="let type of questionTypes" [value]="type.value">{{ type.name }}</option>
+            <option *ngFor="let type of questionTypes" [value]="type.value" [disabled]="type.disabled">{{ type.name }}</option>
           </select>
           <div *ngIf="questionForm.get('questionType')?.invalid && questionForm.get('questionType')?.touched" class="error-message">
             Question type is required.

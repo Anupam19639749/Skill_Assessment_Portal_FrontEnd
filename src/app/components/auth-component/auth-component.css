@@ -1,88 +1,105 @@
 .auth-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
-    font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #f0f4f8, #e0e7ff);
+  font-family: Arial, sans-serif;
 }
 
 .auth-card {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
 }
 
 .auth-card h2 {
-    color: #333;
-    margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #1f2937;
 }
 
 .form-group {
-    margin-bottom: 1rem;
-    text-align: left;
+  margin-bottom: 1rem;
+  text-align: left;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #555;
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #374151;
 }
 
 .form-group input {
-    width: 95%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
 }
 
-.form-group input:focus {
-    outline: none;
-    border-color: #007bff;
+.input-error {
+  font-size: 0.85rem;
+  color: #b91c1c;
+  margin-top: 0.25rem;
 }
 
-button {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.error-msg {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.5rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
 }
 
-button:hover {
-    background-color: #0056b3;
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+button[type="submit"]:hover {
+  background: #4338ca;
+}
+
+button[disabled] {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
 
 .switch-mode {
-    margin-top: 1rem;
-    font-size: 0.9rem;
-    color: #777;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #4b5563;
 }
 
-.switch-mode a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
+.switch-mode button {
+  background: none;
+  border: none;
+  color: #4f46e5;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.switch-mode a:hover {
-    text-decoration: underline;
+.back-home {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+.back-home a {
+  color: #6b7280;
+  text-decoration: none;
+}
+.back-home a:hover {
+  color: #374151;
 }

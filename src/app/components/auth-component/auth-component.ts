@@ -1,29 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { SessionTimeoutService } from '../../services/session-timeout.service';
 import { CommonModule } from '@angular/common';
 import { UserLogin, UserRegister } from '../../Models/user.model';
 
+
 @Component({
   selector: 'app-auth-component',
-  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './auth-component.html',
-  standalone: true, 
-  styleUrl: './auth-component.css'
+  styleUrls: ['./auth-component.css'],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule, RouterLink]
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
   isLoginMode = true;
   authForm!: FormGroup;
+  errorMessage: string | null = null;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: Auth,
+    private sessionTimeout: SessionTimeoutService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.checkRouteMode();
     this.initForm();
+  }
+
+  ngOnDestroy(): void {
+    this.clearMessages();
+  }
+
+  private checkRouteMode(): void {
+    this.isLoginMode = !this.router.url.includes('register');
   }
 
   private initForm(): void {
@@ -33,56 +47,59 @@ export class AuthComponent implements OnInit {
     });
 
     if (!this.isLoginMode) {
-      this.authForm.addControl('fullName', this.fb.control('', Validators.required));
+      this.authForm.addControl('fullName', this.fb.control('', [Validators.required, Validators.minLength(2)]));
     }
   }
 
   onSwitchMode(): void {
     this.isLoginMode = !this.isLoginMode;
+    this.clearMessages();
     this.initForm();
+    const newUrl = this.isLoginMode ? '/login' : '/register';
+    window.history.replaceState({}, '', newUrl);
   }
 
   onSubmit(): void {
+    this.clearMessages();
     if (this.authForm.invalid) {
-      this.authForm.markAllAsTouched(); // Add validation helper
+      this.authForm.markAllAsTouched();
+      this.errorMessage = 'Please fill in all required fields correctly.';
       return;
     }
 
+    this.isLoading = true;
     const { email, password, fullName } = this.authForm.value;
 
     if (this.isLoginMode) {
-      // STRONGLY-TYPED PAYLOAD: UserLogin
       const credentials: UserLogin = { email, password };
-      
-      this.authService.login(credentials).subscribe(
-        res => {
+      this.authService.login(credentials).subscribe({
+        next: (res) => {
           this.authService.storeToken(res.token);
+          this.sessionTimeout.startSession();
           this.router.navigate(['/home']);
         },
-        error => {
-          console.error('Login failed', error);
-          alert('Login failed. Please check your credentials.');
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
         }
-      );
+      });
     } else {
-      // STRONGLY-TYPED PAYLOAD: UserRegister
-      const userToRegister: UserRegister = {
-        email,
-        password,
-        fullName,
-        roleId: 2 // Default to Candidate (assuming RoleId 2 is Candidate)
-      };
-      
-      this.authService.register(userToRegister).subscribe(
-        res => {
+      const userToRegister: UserRegister = { email, password, fullName, roleId: 2 };
+      this.authService.register(userToRegister).subscribe({
+        next: (res) => {
           this.authService.storeToken(res.token);
+          this.sessionTimeout.startSession();
           this.router.navigate(['/home']);
         },
-        error => {
-          console.error('Registration failed', error);
-          alert('Registration failed. Please try again.');
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = err.error?.message || 'Registration failed. Please try again.';
         }
-      );
+      });
     }
+  }
+
+  private clearMessages(): void {
+    this.errorMessage = null;
   }
 }

@@ -3,9 +3,9 @@
   <div class="navbar-content">
     <!-- Logo Section -->
     <div class="navbar-logo-container">
-      <a class="navbar-logo" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
-        Skill Assessment Portal
-      </a>
+      <a class="navbar-logo" (click)="onLogoClick()" style="cursor: pointer;">
+    Skill Assessment Portal
+  </a>
     </div>
 
     <!-- Navigation Links -->
@@ -26,7 +26,6 @@
     
     <!-- User Actions Section -->
     <div class="navbar-user">
-      <!-- Mobile Menu Button (for future mobile menu implementation) -->
       <button class="mobile-menu-button" type="button" aria-label="Open menu">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="6" x2="21" y2="6"></line>
