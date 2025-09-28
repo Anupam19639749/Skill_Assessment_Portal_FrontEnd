@@ -1,60 +1,140 @@
 <div class="assessment-container">
-  <h2>Manage Assessments</h2>
-
-  <div class="form-card">
-    <h3>{{ isEditMode ? 'Edit Assessment' : 'Create New Assessment' }}</h3>
-    <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" id="title" formControlName="title">
-        <div *ngIf="assessmentForm.get('title')?.invalid && assessmentForm.get('title')?.touched" class="error-message">
-          Assessment title is required.
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea id="description" formControlName="description"></textarea>
-        </div>
-      <div class="form-group">
-        <label for="durationMinutes">Duration (minutes)</label>
-        <input type="number" id="durationMinutes" formControlName="durationMinutes">
-        <div *ngIf="assessmentForm.get('durationMinutes')?.invalid && assessmentForm.get('durationMinutes')?.touched" class="error-message">
-          Duration is required and must be at least 1 minute.
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" [disabled]="assessmentForm.invalid" class="btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
-        <button type="button" *ngIf="isEditMode" (click)="onCancelEdit()" class="btn-secondary">Cancel</button>
-      </div>
-    </form>
+  
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Manage Assessments</h1>
+    <p class="page-subtitle">Create, edit and manage your assessment content</p>
   </div>
 
-  <div class="assessment-list">
-    <h3>Existing Assessments</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Duration</th>
-          <th>Created At</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let assessment of assessments">
-          <td>{{ assessment.title }}</td>
-          <td>{{ assessment.description }}</td>
-          <td>{{ assessment.durationMinutes }} mins</td>
-          <td>{{ assessment.createdAt | date:'shortDate' }}</td> <td>
-            <div class="actions-cell">
-              <button class="btn-edit" (click)="onEdit(assessment)">Edit</button>
-              <button class="btn-manage-questions" (click)="onManageQuestions(assessment.assessmentId)">Manage Questions</button>
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-card">
+      <div class="form-header">
+        <h2 class="form-title">{{ isEditMode ? 'Edit Assessment' : 'Create New Assessment' }}</h2>
+        <div *ngIf="isEditMode" class="edit-indicator">
+          <span class="edit-badge">Editing</span>
+        </div>
+      </div>
+      
+      <form [formGroup]="assessmentForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <!-- Title Field -->
+          <div class="form-group">
+            <label class="form-label">Assessment Title</label>
+            <input 
+              type="text" 
+              class="form-input"
+              formControlName="title"
+              placeholder="Enter assessment title">
+            <div *ngIf="assessmentForm.get('title')?.invalid && assessmentForm.get('title')?.touched" 
+                 class="error-text">
+              Assessment title is required
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <p *ngIf="assessments.length === 0">No assessments found.</p>
+          </div>
+
+          <!-- Duration Field -->
+          <div class="form-group">
+            <label class="form-label">Duration (minutes)</label>
+            <input 
+              type="number" 
+              class="form-input"
+              formControlName="durationMinutes"
+              placeholder="60"
+              min="1">
+            <div *ngIf="assessmentForm.get('durationMinutes')?.invalid && assessmentForm.get('durationMinutes')?.touched" 
+                 class="error-text">
+              Duration must be at least 1 minute
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Field -->
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea 
+            class="form-textarea"
+            formControlName="description"
+            placeholder="Enter assessment description (optional)"
+            rows="4"></textarea>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            *ngIf="isEditMode" 
+            class="btn-secondary" 
+            (click)="onCancelEdit()">
+            Cancel
+          </button>
+          
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="assessmentForm.invalid">
+            <span *ngIf="!isEditMode">Create Assessment</span>
+            <span *ngIf="isEditMode">Update Assessment</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
+
+  <!-- Assessments List -->
+  <div class="list-section">
+    <div class="list-header">
+      <h2 class="list-title">Your Assessments</h2>
+      <div class="list-count" *ngIf="assessments.length > 0">
+        {{ assessments.length }} assessment{{ assessments.length !== 1 ? 's' : '' }}
+      </div>
+    </div>
+
+    <!-- Assessment Cards -->
+    <div class="assessments-grid" *ngIf="assessments.length > 0">
+      <div *ngFor="let assessment of assessments" class="assessment-card">
+        <div class="card-header">
+          <h3 class="card-title">{{ assessment.title }}</h3>
+          <div class="card-duration">
+            <span class="duration-badge">{{ assessment.durationMinutes }}min</span>
+          </div>
+        </div>
+        
+        <div class="card-content">
+          <p class="card-description" *ngIf="assessment.description">
+            {{ assessment.description }}
+          </p>
+          <p class="card-description no-description" *ngIf="!assessment.description">
+            No description provided
+          </p>
+          
+          <div class="card-meta">
+            <span class="meta-item">
+              Created: {{ assessment.createdAt | date:'MMM dd, yyyy' }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="card-actions">
+          <button 
+            class="action-btn edit-btn" 
+            (click)="onEdit(assessment)">
+            Edit
+          </button>
+          <button 
+            class="action-btn manage-btn" 
+            (click)="onManageQuestions(assessment.assessmentId)">
+            Manage Questions
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="assessments.length === 0" class="empty-state">
+      <div class="empty-icon">📝</div>
+      <h3 class="empty-title">No assessments yet</h3>
+      <p class="empty-text">Create your first assessment to get started</p>
+    </div>
+  </div>
+
 </div>

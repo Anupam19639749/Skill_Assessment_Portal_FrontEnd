@@ -1,41 +1,71 @@
-<div class="home-page-container">
+<div class="home-container">
   
-  <div class="welcome-section">
-    <!-- <h1>Welcome, <span class="user-name">{{ userName }}</span>!</h1> -->
-    <h1><p class="tagline">Your gateway to skill development and assessment.</p></h1>
+  <!-- Welcome Header -->
+  <div class="welcome-header">
+    <div class="welcome-content">
+      <h2 class="welcome-title">
+        <p >Your gateway to skill development and assessment</p>
+      </h2>
+    </div>
   </div>
 
-  <div *ngIf="isCandidate" class="candidate-dashboard-section">
-    <h2 class="section-title">Your Active Assessments</h2>
+  <!-- Candidate Dashboard -->
+  <div *ngIf="isCandidate" class="candidate-section">
+    <div class="section-header">
+      <h2 class="section-title">Your Active Assessments</h2>
+      <p class="section-subtitle">Complete your assigned assessments to showcase your skills</p>
+    </div>
     
-    <div *ngIf="assignedAssessments.length === 0" class="no-active-assessments">
-      <p>You have no active assessments at the moment. Great job if you've completed them all!</p>
-      <p>View your past submissions on the <a routerLink="/my-submissions">My Submissions</a> page.</p>
+    <!-- No Assessments State -->
+    <div *ngIf="assignedAssessments.length === 0" class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <h3 class="empty-state-title">All caught up!</h3>
+      <p class="empty-state-text">You have no active assessments at the moment.</p>
+      <a routerLink="/my-submissions" class="empty-state-link">
+        View your submissions →
+      </a>
     </div>
 
-    <div *ngIf="assignedAssessments.length > 0" class="assessment-cards-grid">
+    <!-- Assessment Cards -->
+    <div *ngIf="assignedAssessments.length > 0" class="assessments-grid">
       <div *ngFor="let assessment of assignedAssessments" class="assessment-card">
-        <div class="card-header">
-          <h3 class="assessment-title">{{ assessment.assessmentTitle }}</h3>
-          <span class="assessment-status status-{{ assessment.status }}">
-            {{ getStatusDisplayName(assessment.status) }}
-          </span>
+        <!-- Card Status Indicator -->
+        <div class="card-status" [ngClass]="'status-' + assessment.status"></div>
+        
+        <!-- Card Content -->
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">{{ assessment.assessmentTitle }}</h3>
+            <span class="status-badge" [ngClass]="'badge-' + assessment.status">
+              {{ getStatusDisplayName(assessment.status) }}
+            </span>
+          </div>
+          
+          <div class="card-details">
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <div class="detail-content">
+                <span class="detail-label">Scheduled</span>
+                <span class="detail-value">{{ assessment.scheduledAt | date:'MMM dd, yyyy' }}</span>
+              </div>
+            </div>
+            
+            <div class="detail-item" *ngIf="assessment.durationMinutes">
+              <span class="detail-icon">⏱️</span>
+              <div class="detail-content">
+                <span class="detail-label">Duration</span>
+                <span class="detail-value">{{ assessment.durationMinutes }} minutes</span>
+              </div>
+            </div>
+          </div>
         </div>
         
-        <div class="card-body">
-          <div class="card-detail">
-            <span class="detail-label">Scheduled For:</span>
-            <span class="detail-value">{{ assessment.scheduledAt | date:'medium' }}</span>
-          </div>
-          <div class="card-detail" *ngIf="assessment.durationMinutes">
-            <span class="detail-label">Duration:</span>
-            <span class="detail-value">{{ assessment.durationMinutes }} Minutes</span>
-          </div>
-        </div>
-        
-        <div class="card-actions">
+        <!-- Card Action -->
+        <div class="card-action">
           <button 
-            class="btn btn-primary" 
+            class="action-btn"
+            [class.btn-primary]="assessment.status !== UserAssessmentStatus.Evaluated && assessment.status !== UserAssessmentStatus.Submitted"
+            [class.btn-disabled]="assessment.status === UserAssessmentStatus.Evaluated || assessment.status === UserAssessmentStatus.Submitted"
             (click)="onStartAssessment(assessment.userAssessmentId)"
             [disabled]="assessment.status === UserAssessmentStatus.Evaluated || assessment.status === UserAssessmentStatus.Submitted">
             {{ assessment.status === UserAssessmentStatus.InProgress ? 'Resume Assessment' : 'Start Assessment' }}
@@ -45,15 +75,64 @@
     </div>
   </div>
 
-  <div *ngIf="isManager" class="manager-dashboard-section">
-    <h2 class="section-title">Manager Dashboard</h2>
-    <p class="manager-info">Welcome, {{ userName }}. Use the navigation bar above to:</p>
-    <ul class="manager-actions-list">
-      <li><a routerLink="/assign-assessment" class="manager-action-link">Assign new assessments to users.</a></li>
-      <li><a routerLink="/assessments" class="manager-action-link">Manage existing assessment questions and details.</a></li>
-      <li><a routerLink="/users" class="manager-action-link">Manage user accounts and roles.</a></li>
-    </ul>
-    <p class="manager-tip">Your quick access links are always available in the navigation bar.</p>
+  <!-- Manager Dashboard -->
+  <div *ngIf="isManager" class="manager-section">
+    <div class="section-header">
+      <h2 class="section-title">Admin Dashboard</h2>
+      <p class="section-subtitle">Manage your assessment platform</p>
+    </div>
+    
+    <!-- Quick Actions Grid -->
+    <div class="quick-actions-grid">
+      <a routerLink="/assign-assessment" class="action-card">
+        <div class="action-icon assign-icon">👥</div>
+        <div class="action-content">
+          <h3 class="action-title">Assign Assessment</h3>
+          <p class="action-description">Assign assessments to users and set schedules</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </a>
+      
+      <a routerLink="/assessments" class="action-card">
+        <div class="action-icon manage-icon">📝</div>
+        <div class="action-content">
+          <h3 class="action-title">Manage Assessments</h3>
+          <p class="action-description">Create, edit and manage assessment content</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </a>
+      
+      <a routerLink="/users" class="action-card">
+        <div class="action-icon users-icon">👤</div>
+        <div class="action-content">
+          <h3 class="action-title">Manage Users</h3>
+          <p class="action-description">View and manage user accounts and roles</p>
+        </div>
+        <div class="action-arrow">→</div>
+      </a>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="stats-section">
+      <div class="stats-header">
+        <h3 class="stats-title">Quick Overview</h3>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">--</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">--</div>
+          <div class="stat-label">Assessments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">--</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <p class="stats-note">Connect to your API to show live data</p>
+    </div>
   </div>
 
 </div>

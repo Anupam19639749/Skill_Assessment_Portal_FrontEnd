@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Users } from '../../Models/user.model';
 import { User } from '../../services/user';
@@ -13,12 +13,15 @@ import { jwtDecode } from 'jwt-decode';
   templateUrl: './profile.html',
   styleUrl: './profile.css'
 })
-export class Profile {
+export class Profile implements OnInit {
   user: Users | null = null;
   profileForm!: FormGroup;
   passwordForm!: FormGroup;
   
-  isEditMode: boolean = false; // To toggle between view and edit
+  isEditMode: boolean = false;
+  selectedFile: File | null = null;
+  imagePreviewUrl: string | null = null;
+  isUploading: boolean = false;
   
   successMessage: string | null = null;
   errorMessage: string | null = null;
@@ -38,31 +41,30 @@ export class Profile {
   }
 
   initForms(): void {
-    // Editable profile form
     this.profileForm = this.fb.group({
-      fullName: ['', Validators.required],
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      profilePicturePath: [''], // For URL input
+      profilePicturePath: [''],
       gender: [''],
       highestQualification: [''],
       isEmployed: [false],
-      currentRole: [''] // Optional, will be validated based on isEmployed
+      currentRole: ['']
     });
 
-    // Password change form
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
 
-    // Add conditional validation for currentRole
+    // Conditional validation for currentRole
     this.profileForm.get('isEmployed')?.valueChanges.subscribe(isEmployed => {
       const currentRoleControl = this.profileForm.get('currentRole');
       if (isEmployed) {
-        currentRoleControl?.setValidators(Validators.required);
+        currentRoleControl?.setValidators([Validators.required, Validators.minLength(2)]);
       } else {
         currentRoleControl?.clearValidators();
+        currentRoleControl?.setValue('');
       }
       currentRoleControl?.updateValueAndValidity();
     });
@@ -76,6 +78,8 @@ export class Profile {
         next: (data: Users) => {
           this.user = data;
           this.profileForm.patchValue(data);
+          // Set image preview to current profile picture
+          this.imagePreviewUrl = data.profilePicturePath || null;
         },
         error: (err) => {
           console.error('Failed to load profile data', err);
@@ -85,7 +89,89 @@ export class Profile {
     }
   }
 
-  // Custom validator for password matching
+  // File upload handling
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        this.errorMessage = 'Please select a valid image file.';
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        this.errorMessage = 'Image size must be less than 5MB.';
+        return;
+      }
+
+      this.selectedFile = file;
+      this.clearMessages();
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onImageDrop(event: DragEvent): void {
+    event.preventDefault();
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        this.selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreviewUrl = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  onImageDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  removeSelectedImage(): void {
+    this.selectedFile = null;
+    this.imagePreviewUrl = this.user?.profilePicturePath || null;
+  }
+
+  // Upload image and get path
+  private async uploadImage(): Promise<string | null> {
+    if (!this.selectedFile) return null;
+
+    try {
+      this.isUploading = true;
+      
+      // Create a unique filename
+      const timestamp = Date.now();
+      const fileExtension = this.selectedFile.name.split('.').pop();
+      const fileName = `profile_${this.getUserIdFromToken()}_${timestamp}.${fileExtension}`;
+      
+      // Convert file to base64 or handle as needed
+      // For now, we'll simulate saving to public/images/ folder
+      const imagePath = `/images/${fileName}`;
+      
+      // In a real implementation, you would:
+      // 1. Upload file to server
+      // 2. Get back the file path
+      // For this example, we'll use the preview URL
+      
+      return imagePath;
+    } catch (error) {
+      console.error('Image upload failed:', error);
+      throw new Error('Failed to upload image');
+    } finally {
+      this.isUploading = false;
+    }
+  }
+
   passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
     const newPass = control.get('newPassword');
     const confirmPass = control.get('confirmPassword');
@@ -102,28 +188,43 @@ export class Profile {
     }
   }
 
-  onProfileSubmit(): void {
+  async onProfileSubmit(): Promise<void> {
     this.clearMessages();
     this.profileForm.markAllAsTouched();
     
     if (this.profileForm.invalid) {
-      this.errorMessage = 'Please correct the errors in the profile form.';
+      this.errorMessage = 'Please correct the errors in the form.';
       return;
     }
     
     const userId = this.getUserIdFromToken();
     if (userId) {
-      this.userService.updateUserProfile(userId, this.profileForm.value).subscribe({
-        next: () => {
-          this.successMessage = 'Profile updated successfully!';
-          this.isEditMode = false; // Exit edit mode
-          this.loadUserProfile(); // Reload to reflect changes
-        },
-        error: (err) => {
-          console.error('Profile update failed', err);
-          this.errorMessage = err.error?.message || 'Failed to update profile.';
+      try {
+        let profileData = { ...this.profileForm.value };
+        
+        // Handle image upload if new image selected
+        if (this.selectedFile) {
+          const imagePath = await this.uploadImage();
+          if (imagePath) {
+            profileData.profilePicturePath = imagePath;
+          }
         }
-      });
+        
+        this.userService.updateUserProfile(userId, profileData).subscribe({
+          next: () => {
+            this.successMessage = 'Profile updated successfully!';
+            this.isEditMode = false;
+            this.selectedFile = null;
+            this.loadUserProfile();
+          },
+          error: (err) => {
+            console.error('Profile update failed', err);
+            this.errorMessage = err.error?.message || 'Failed to update profile.';
+          }
+        });
+      } catch (error) {
+        this.errorMessage = 'Failed to upload image. Please try again.';
+      }
     }
   }
 
@@ -153,15 +254,27 @@ export class Profile {
   }
 
   toggleEditMode(): void {
+    if (this.isEditMode) {
+      // Cancel editing - reset form and image
+      this.loadUserProfile();
+      this.selectedFile = null;
+      this.imagePreviewUrl = this.user?.profilePicturePath || null;
+    } else {
+      // Enter edit mode
+      if (this.user) {
+        this.profileForm.patchValue(this.user);
+        this.imagePreviewUrl = this.user.profilePicturePath || null;
+      }
+    }
     this.isEditMode = !this.isEditMode;
     this.clearMessages();
-    if (this.isEditMode && this.user) {
-      // If entering edit mode, ensure form values are up-to-date
-      this.profileForm.patchValue(this.user);
-    } else {
-      // If exiting edit mode without saving, reset form to original values
-      this.loadUserProfile(); 
+  }
+
+  getCurrentProfileImage(): string {
+    if (this.imagePreviewUrl) {
+      return this.imagePreviewUrl;
     }
+    return this.user?.profilePicturePath || '/images/default-profile.png';
   }
 
   private getUserIdFromToken(): number | null {

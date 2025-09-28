@@ -1,125 +1,229 @@
 <div class="profile-container">
-  <h2>My Profile</h2>
+  
+  <!-- Header -->
+  <div class="profile-header">
+    <h1 class="page-title">My Profile</h1>
+    <p class="page-subtitle">Manage your personal information and account settings</p>
+  </div>
 
-  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <!-- Status Messages -->
+  <div *ngIf="successMessage" class="alert success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert error">{{ errorMessage }}</div>
 
   <div class="profile-grid">
     
-    <div class="profile-card profile-details">
-      <h3>User Details</h3>
-      
-      <div class="profile-picture-section">
-        <img 
-            [src]="profileForm.get('profilePicturePath')?.value || '/images/default-profile.png'" 
-            alt="Profile Picture" 
-            class="profile-img-preview">
-        <button type="button" class="btn btn-primary" (click)="toggleEditMode()">
-          {{ isEditMode ? 'Cancel Edit' : 'Edit Profile' }}
+    <!-- Profile Information Card -->
+    <div class="profile-card main-profile">
+      <div class="card-header">
+        <h2 class="card-title">Profile Information</h2>
+        <button 
+          type="button" 
+          class="edit-btn"
+          [class.cancel-btn]="isEditMode"
+          (click)="toggleEditMode()">
+          {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
         </button>
       </div>
 
-      <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="user-details-form">
-        <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input id="fullName" formControlName="fullName" type="text" [attr.disabled]="!isEditMode ? true : null">
-          <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="error-message">
-            Full Name is required.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input id="email" formControlName="email" type="email" [attr.disabled]="!isEditMode ? true : null">
-          <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="error-message">
-            <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required.</span>
-            <span *ngIf="profileForm.get('email')?.errors?.['email']">Enter a valid email.</span>
-          </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="profilePicturePath">Profile Picture URL</label>
-            <input id="profilePicturePath" formControlName="profilePicturePath" type="url" [attr.disabled]="!isEditMode ? true : null">
-            <div *ngIf="profileForm.get('profilePicturePath')?.invalid && profileForm.get('profilePicturePath')?.touched" class="error-message">
-                Please enter a valid URL.
+      <!-- Profile Picture Section -->
+      <div class="profile-picture-section">
+        <div class="avatar-container">
+          <img 
+            [src]="getCurrentProfileImage()" 
+            alt="Profile Picture" 
+            class="profile-avatar">
+          
+          <!-- Upload overlay for edit mode -->
+          <div *ngIf="isEditMode" 
+               class="upload-overlay"
+               (drop)="onImageDrop($event)"
+               (dragover)="onImageDragOver($event)">
+            <div class="upload-content">
+              <span class="upload-icon">📷</span>
+              <span class="upload-text">Drop image or click to upload</span>
             </div>
-        </div>
-
-        <div class="form-group">
-          <label for="gender">Gender</label>
-          <select id="gender" formControlName="gender" [attr.disabled]="!isEditMode ? true : null">
-            <option value="">-- Select Gender --</option>
-            <option *ngFor="let gender of genderOptions" [value]="gender">{{ gender }}</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="highestQualification">Highest Qualification</label>
-          <select id="highestQualification" formControlName="highestQualification" [attr.disabled]="!isEditMode ? true : null">
-            <option value="">-- Select Qualification --</option>
-            <option *ngFor="let qual of qualificationOptions" [value]="qual">{{ qual }}</option>
-          </select>
-        </div>
-
-        <div class="form-group checkbox-group">
-          <input id="isEmployed" formControlName="isEmployed" type="checkbox" [attr.disabled]="!isEditMode ? true : null">
-          <label for="isEmployed">Currently Employed</label>
-        </div>
-
-        <div class="form-group" *ngIf="profileForm.get('isEmployed')?.value">
-          <label for="currentRole">Current Role</label>
-          <input id="currentRole" formControlName="currentRole" type="text" [attr.disabled]="!isEditMode ? true : null">
-          <div *ngIf="profileForm.get('currentRole')?.invalid && profileForm.get('currentRole')?.touched" class="error-message">
-            Current Role is required if employed.
+            <input 
+              type="file" 
+              class="file-input"
+              accept="image/*"
+              (change)="onFileSelected($event)">
           </div>
         </div>
-        <div class="form-group">
-            <label>Role:</label>
-            <input [value]="user?.roleName || 'Loading...'" type="text" disabled>
+
+        <!-- Image controls for edit mode -->
+        <div *ngIf="isEditMode && selectedFile" class="image-controls">
+          <span class="file-name">{{ selectedFile.name }}</span>
+          <button type="button" class="remove-btn" (click)="removeSelectedImage()">Remove</button>
         </div>
-        <div class="form-group">
-            <label>Member Since:</label>
-            <input [value]="user?.createdAt | date: 'mediumDate'" type="text" disabled>
+      </div>
+
+      <!-- Profile Form -->
+      <form [formGroup]="profileForm" (ngSubmit)="onProfileSubmit()" class="profile-form">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input 
+              type="text" 
+              class="form-input"
+              formControlName="fullName" 
+              [readonly]="!isEditMode"
+              placeholder="Enter your full name">
+            <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" 
+                 class="error-text">
+              <span *ngIf="profileForm.get('fullName')?.errors?.['required']">Full name is required</span>
+              <span *ngIf="profileForm.get('fullName')?.errors?.['minlength']">Name must be at least 2 characters</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input 
+              type="email" 
+              class="form-input"
+              formControlName="email" 
+              [readonly]="!isEditMode"
+              placeholder="Enter your email">
+            <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" 
+                 class="error-text">
+              <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</span>
+              <span *ngIf="profileForm.get('email')?.errors?.['email']">Enter a valid email address</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select 
+              class="form-select"
+              formControlName="gender" 
+              [disabled]="!isEditMode">
+              <option value="">Select gender</option>
+              <option *ngFor="let gender of genderOptions" [value]="gender">{{ gender }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Highest Qualification</label>
+            <select 
+              class="form-select"
+              formControlName="highestQualification" 
+              [disabled]="!isEditMode">
+              <option value="">Select qualification</option>
+              <option *ngFor="let qual of qualificationOptions" [value]="qual">{{ qual }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="employment-section">
+          <div class="checkbox-group">
+            <input 
+              type="checkbox" 
+              id="isEmployed"
+              class="form-checkbox"
+              formControlName="isEmployed" 
+              [disabled]="!isEditMode">
+            <label for="isEmployed" class="checkbox-label">Currently Employed</label>
+          </div>
+
+          <div class="form-group" *ngIf="profileForm.get('isEmployed')?.value">
+            <label class="form-label">Current Role</label>
+            <input 
+              type="text" 
+              class="form-input"
+              formControlName="currentRole" 
+              [readonly]="!isEditMode"
+              placeholder="Enter your current role">
+            <div *ngIf="profileForm.get('currentRole')?.invalid && profileForm.get('currentRole')?.touched" 
+                 class="error-text">
+              Current role is required when employed
+            </div>
+          </div>
+        </div>
+
+        <!-- Read-only Information -->
+        <div class="readonly-section">
+          <div class="info-row">
+            <span class="info-label">Role:</span>
+            <span class="info-value">{{ user?.roleName || 'Loading...' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Member Since:</span>
+            <span class="info-value">{{ user?.createdAt | date: 'MMMM dd, yyyy' }}</span>
+          </div>
         </div>
         
+        <!-- Save Button -->
         <div class="form-actions" *ngIf="isEditMode">
-          <button type="submit" [disabled]="profileForm.invalid">Save Changes</button>
+          <button 
+            type="submit" 
+            class="save-btn"
+            [disabled]="profileForm.invalid || isUploading">
+            <span *ngIf="!isUploading">Save Changes</span>
+            <span *ngIf="isUploading">Saving...</span>
+          </button>
         </div>
       </form>
     </div>
 
-    <div class="profile-card password-change">
-      <h3>Change Password</h3>
-      <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+    <!-- Password Change Card -->
+    <div class="profile-card password-card">
+      <div class="card-header">
+        <h2 class="card-title">Security Settings</h2>
+      </div>
+
+      <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()" class="password-form">
         <div class="form-group">
-          <label for="currentPassword">Current Password</label>
-          <input formControlName="currentPassword" id="currentPassword" type="password">
-          <div *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" class="error-message">
-            Current password is required.
+          <label class="form-label">Current Password</label>
+          <input 
+            type="password" 
+            class="form-input"
+            formControlName="currentPassword"
+            placeholder="Enter current password">
+          <div *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" 
+               class="error-text">
+            Current password is required
           </div>
         </div>
 
         <div class="form-group">
-          <label for="newPassword">New Password</label>
-          <input formControlName="newPassword" id="newPassword" type="password">
-          <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" class="error-message">
-            <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required.</span>
-            <span *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Must be at least 6 characters.</span>
+          <label class="form-label">New Password</label>
+          <input 
+            type="password" 
+            class="form-input"
+            formControlName="newPassword"
+            placeholder="Enter new password">
+          <div *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" 
+               class="error-text">
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">New password is required</span>
+            <span *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">Password must be at least 6 characters</span>
           </div>
         </div>
         
         <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input formControlName="confirmPassword" id="confirmPassword" type="password">
-          <div *ngIf="passwordForm.get('confirmPassword')?.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched" class="error-message">
-            Passwords do not match.
+          <label class="form-label">Confirm New Password</label>
+          <input 
+            type="password" 
+            class="form-input"
+            formControlName="confirmPassword"
+            placeholder="Confirm new password">
+          <div *ngIf="passwordForm.get('confirmPassword')?.errors?.['mismatch'] && passwordForm.get('confirmPassword')?.touched" 
+               class="error-text">
+            Passwords do not match
           </div>
         </div>
         
         <div class="form-actions">
-          <button type="submit" [disabled]="passwordForm.invalid">Update Password</button>
+          <button 
+            type="submit" 
+            class="password-btn"
+            [disabled]="passwordForm.invalid">
+            Update Password
+          </button>
         </div>
       </form>
     </div>
+
   </div>
 </div>

@@ -10,8 +10,8 @@ import { UserAssessments, UserAssessmentStatus } from '../../Models/user-assessm
 interface DecodedTokenPayload {
   fullName: string;
   email: string;
-  role: string; // Or the full claim URL if that's what the backend sends
-  nameid: string; // Typically the user ID
+  role: string; 
+  nameid: string;
   // The claims sent by .NET are often 'nameid' and the full role claim URL
   ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']?: string;
   ['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']?: string;
@@ -20,10 +20,10 @@ interface DecodedTokenPayload {
 
 @Component({
   selector: 'app-home',
-  standalone: true, // Mark as standalone
+  standalone: true, 
   imports: [CommonModule, RouterLink, DatePipe],
   templateUrl: './home.html',
-  styleUrls: ['./home.css'], // CORRECTED: styleUrl to styleUrls
+  styleUrls: ['./home.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements OnInit{
