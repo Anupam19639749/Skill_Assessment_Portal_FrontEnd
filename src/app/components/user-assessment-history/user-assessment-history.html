@@ -1,0 +1,83 @@
+<div class="assessment-history-container">
+  <div class="header-section">
+    <button class="back-button" (click)="goBack()" title="Back to User Management">
+      <span class="material-icons">arrow_back</span>
+      <span>Back</span>
+    </button>
+    <div class="candidate-info">
+      <h1 class="page-title">Assessments for {{ candidateName }}</h1>
+      <p class="candidate-email">{{ candidateEmail }}</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="loading-spinner"></div>
+    <p>Loading assessments...</p>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error-section">
+    <span class="material-icons error-icon">error_outline</span>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && assessments.length === 0" class="empty-state">
+    <span class="material-icons empty-icon">assignment</span>
+    <h3 class="empty-title">No Assessments Found</h3>
+    <p class="empty-text">This candidate has not been assigned any assessments yet.</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && assessments.length > 0" class="assessments-list">
+    <div *ngFor="let assessment of assessments" class="assessment-card">
+      <div class="card-header">
+        <h3 class="assessment-title">{{ assessment.assessmentTitle }}</h3>
+        <span class="status-badge" [ngClass]="getStatusBadgeClass(assessment.status)">
+          {{ UserAssessmentStatus[assessment.status] | titlecase }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Scheduled For:</span>
+            <span class="detail-value">{{ assessment.scheduledAt | date:'mediumDate' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="assessment.startedAt">
+            <span class="detail-label">Started At:</span>
+            <span class="detail-value">{{ assessment.startedAt | date:'shortTime' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="assessment.submittedAt">
+            <span class="detail-label">Submitted At:</span>
+            <span class="detail-value">{{ assessment.submittedAt | date:'shortTime' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Duration:</span>
+            <span class="detail-value">{{ assessment.durationMinutes }} mins</span>
+          </div>
+
+          <ng-container *ngIf="assessment.status === UserAssessmentStatus.Submitted">
+            <div class="detail-item">
+              <span class="detail-label">Marks Obtained:</span>
+              <span class="detail-value">{{ getMarksDisplay(assessment) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Percentage:</span>
+              <span class="detail-value">{{ getPercentageDisplay(assessment) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Result:</span>
+              <span class="detail-value" [ngClass]="getPassFailClass(assessment)">
+                {{ getPassFailStatus(assessment) }}
+              </span>
+            </div>
+            <div class="detail-item full-width" *ngIf="assessment.feedback">
+              <span class="detail-label">Feedback:</span>
+              <span class="detail-value feedback-text">{{ assessment.feedback }}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

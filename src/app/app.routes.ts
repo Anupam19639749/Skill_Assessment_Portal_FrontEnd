@@ -12,7 +12,7 @@ import { TakeAssessment } from './components/candidate/take-assessment/take-asse
 import { MySubmissions } from './features/candidate/my-submissions/my-submissions';
 import { Result } from './features/candidate/result/result';
 import { LandingComponent } from './components/landing-component/landing-component';
-
+import { UserAssessmentHistory } from './components/user-assessment-history/user-assessment-history';
 
 export const routes: Routes = [
     { path: '', component: LandingComponent},
@@ -62,5 +62,12 @@ export const routes: Routes = [
           path: 'result/:userAssessmentId',
           component: Result,
           canActivate: [AuthGuard]
+     },
+     {
+          path: 'users/:userId/assessments',
+          component: UserAssessmentHistory,
+          canActivate: [AuthGuard, RoleGuard],
+          data: { roles: ['Admin', 'Evaluator'] }
      }
+     
 ];

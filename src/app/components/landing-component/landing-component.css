@@ -175,21 +175,6 @@
   padding: 0 1rem;
 }
 
-.preview-dots {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.preview-dots span {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #e2e8f0;
-}
-
-.preview-dots span:nth-child(1) { background: #ff5f56; }
-.preview-dots span:nth-child(2) { background: #ffbd2e; }
-.preview-dots span:nth-child(3) { background: #27ca3f; }
 
 .preview-content {
   padding: 2rem;
@@ -253,7 +238,7 @@
 
 /* Question Types Carousel */
 .question-types-section {
-  padding: 6rem 2rem;
+  padding: 2rem 0.5rem;
   background: #f8fafc;
 }
 
@@ -344,114 +329,9 @@
   font-weight: 500;
 }
 
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #cbd5e0;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.dot.active {
-  background: #667eea;
-  transform: scale(1.2);
-}
-
-/* Features Section */
-.features-section {
-  padding: 6rem 2rem;
-  background: white;
-}
-
-.features-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-}
-
-.feature-column {
-  position: relative;
-}
-
-.column-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.column-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  display: block;
-}
-
-.column-header h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #2d3748;
-}
-
-.column-header p {
-  color: #718096;
-  font-size: 1.1rem;
-}
-
-.feature-list {
-  space-y: 2rem;
-}
-
-.feature-item {
-  display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
-}
-
-.feature-item:hover {
-  background: #edf2f7;
-  transform: translateX(8px);
-}
-
-.feature-icon {
-  font-size: 1.5rem;
-  width: 50px;
-  height: 50px;
-  background: #667eea;
-  color: white;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.feature-content h4 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #2d3748;
-}
-
-.feature-content p {
-  color: #718096;
-  line-height: 1.5;
-}
-
 /* Social Proof */
 .social-proof-section {
-  padding: 4rem 2rem;
+  padding-bottom: 3rem;
   background: #f8fafc;
 }
 
