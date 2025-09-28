@@ -165,9 +165,12 @@ export class Layout implements OnInit, OnDestroy {
   }
 
   onLogout(): void {
-    this.authService.logout();
-    this.navigationService.showNavigation();
-    this.router.navigate(['/']);
+    if(confirm('Logging out!!!'))
+    {
+      this.authService.logout();
+      this.navigationService.showNavigation();
+      this.router.navigate(['/']);
+    }
   }
 
   // Helper method to check if current route is landing page
