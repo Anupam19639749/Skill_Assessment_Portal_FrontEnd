@@ -452,6 +452,10 @@
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
+  .btn-logout {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
   
   .content {
     padding-top: 4rem;
@@ -462,11 +466,13 @@
   .navbar-content {
     padding: 0 0.75rem;
   }
-  
+  .btn-logout {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
   .navbar-user {
     gap: 0.75rem;
   }
-  
   .btn-logout::after {
     display: none;
   }
@@ -502,4 +508,23 @@
 .navbar.navbar-visible {
   transform: translateY(0);
   transition: transform 0.3s ease-in-out;
+}
+
+/* Show menu when toggled */
+.navbar-nav-links.active {
+  display: flex;
+  flex-direction: column; /* stack vertically for mobile */
+  position: absolute;
+  top: 4rem; /* just below navbar */
+  left: 0;
+  width: 100%;
+  background-color: #fff; /* match navbar bg */
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+
+.navbar-nav-links.active a {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
 }

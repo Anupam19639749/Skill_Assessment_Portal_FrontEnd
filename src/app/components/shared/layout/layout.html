@@ -9,30 +9,34 @@
     </div>
 
     <!-- Navigation Links -->
-    <nav class="navbar-nav-links">
-      <a *ngIf="isManager" routerLink="/assign-assessment" routerLinkActive="active">
+    <nav class="navbar-nav-links" [ngClass]="{'active': isMenuOpen}">
+      <a *ngIf="isManager" routerLink="/assign-assessment" routerLinkActive="active" (click)="closeMenu()">
         Assign Assessment
       </a>
-      <a *ngIf="isManager" routerLink="/assessments" routerLinkActive="active">
+      <a *ngIf="isManager" routerLink="/assessments" routerLinkActive="active" (click)="closeMenu()">
         Manage Assessments
       </a>
-      <a *ngIf="isManager" routerLink="/users" routerLinkActive="active">
+      <a *ngIf="isManager" routerLink="/users" routerLinkActive="active" (click)="closeMenu()">
         Manage Users
       </a>
-      <a *ngIf="isCandidate" routerLink="/my-submissions" routerLinkActive="active">
+      <a *ngIf="isCandidate" routerLink="/my-submissions" routerLinkActive="active" (click)="closeMenu()">
         My Submissions
       </a>
     </nav>
     
     <!-- User Actions Section -->
     <div class="navbar-user">
-      <button class="mobile-menu-button" type="button" aria-label="Open menu">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
+      <button class="mobile-menu-button"
+        type="button"
+        aria-label="Open menu"
+        (click)="toggleMenu()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
 
       <!-- Profile Button -->
       <a *ngIf="isLoggedIn" 

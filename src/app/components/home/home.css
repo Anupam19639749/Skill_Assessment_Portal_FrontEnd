@@ -437,58 +437,51 @@
   margin-top: 30px;
 }
 
-/* Responsive adjustments */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
   }
-}
 
-@media (max-width: 600px) {
-  .manager-dashboard-section {
-    padding: 20px;
-  }
-  .stats-grid {
-    grid-template-columns: 1fr; /* Stack cards vertically on smaller mobile */
-  }
   .stat-value {
     font-size: 2em;
   }
-  .stat-icon {
-    font-size: 2em;
-  }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
-  .home-container {
-    padding: 1rem;
-  }
-
-  .welcome-header {
-    padding: 2rem 1rem;
-  }
-
-  .welcome-title {
-    font-size: 2rem;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-  }
-
-  .assessments-grid,
-  .quick-actions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .stats-card-container {
+    padding: 15px;
   }
 
   .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr; /* 2 cards per row */
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-value {
+    font-size: 1.6em;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr; /* Stack all cards */
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-value {
+    font-size: 1.4em;
+  }
+
+  .stat-label {
+    font-size: 0.8em;
   }
 }

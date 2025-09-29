@@ -154,14 +154,8 @@ export class Profile implements OnInit {
       const fileExtension = this.selectedFile.name.split('.').pop();
       const fileName = `profile_${this.getUserIdFromToken()}_${timestamp}.${fileExtension}`;
       
-      // Convert file to base64 or handle as needed
       // For now, we'll simulate saving to public/images/ folder
       const imagePath = `/images/${fileName}`;
-      
-      // In a real implementation, you would:
-      // 1. Upload file to server
-      // 2. Get back the file path
-      // For this example, we'll use the preview URL
       
       return imagePath;
     } catch (error) {

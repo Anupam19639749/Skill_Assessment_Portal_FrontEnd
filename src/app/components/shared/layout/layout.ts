@@ -38,6 +38,8 @@ export class Layout implements OnInit, OnDestroy {
   userProfilePath: string | null = null;
   currentUserId: number | null = null;
 
+  isMenuOpen: boolean = false;
+
   private tokenSubscription!: Subscription; 
   private navigationSubscription!: Subscription;
   private routerSubscription!: Subscription;
@@ -50,6 +52,14 @@ export class Layout implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private elementRef: ElementRef,
   ) { }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
 
   @HostListener('window:scroll')
   onWindowScroll() {

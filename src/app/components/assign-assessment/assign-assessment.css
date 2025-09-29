@@ -68,6 +68,18 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.form-select option {
+  white-space: normal; /* Allow wrapping if text is long */
+  word-break: break-word;
+}
+
+/* Make datetime input responsive */
+.form-input[type="datetime-local"] {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 .error-text {
   color: #dc2626;
   font-size: 0.875rem;
@@ -289,6 +301,13 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  
+  .form-select,
+  .form-input[type="datetime-local"] {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+    max-width: 100% !important;
+  }
   .assign-container {
     padding: 1rem 0.5rem;
   }
@@ -325,5 +344,13 @@
 
   .user-main {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-select,
+  .form-input[type="datetime-local"] {
+    font-size: 0.85rem;
+    padding: 0.5rem;
   }
 }
